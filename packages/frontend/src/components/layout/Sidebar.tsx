@@ -877,8 +877,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onExportSVG, onExportPNG }) =>
         text: 'CONFIDENTIAL',
         fontSize: 32,
         fontFamily: 'Inter',
-        color: 'rgba(255, 255, 255, 0.08)',
-        opacity: 0.3,
+        color: 'rgba(255, 255, 255, 0.3)',
+        opacity: 1,
         rotation: 45,
         repeat: true,
         repeatSpacing: 200,
@@ -951,6 +951,207 @@ export const Sidebar: React.FC<SidebarProps> = ({ onExportSVG, onExportPNG }) =>
     addComponent(newComponent);
   };
 
+  // 添加图片组件
+  const addImage = () => {
+    const newComponent = {
+      id: uuidv4(),
+      type: 'image' as const,
+      x: 400,
+      y: 300,
+      width: 200,
+      height: 150,
+      rotation: 0,
+      opacity: 1,
+      zIndex: 1,
+      selected: false,
+      locked: false,
+      data: {
+        src: '',
+        placeholderColor: 'rgba(59, 130, 246, 0.2)',
+        placeholderText: '点击上传图片',
+        showPlaceholder: true,
+        cornerRadius: 8,
+        objectFit: 'cover' as const,
+      },
+    };
+    addComponent(newComponent);
+  };
+
+  // 添加图标组件
+  const addIcon = () => {
+    const newComponent = {
+      id: uuidv4(),
+      type: 'icon' as const,
+      x: 450,
+      y: 350,
+      width: 48,
+      height: 48,
+      rotation: 0,
+      opacity: 1,
+      zIndex: 1,
+      selected: false,
+      locked: false,
+      data: {
+        iconType: 'gear' as const,
+        iconColor: '#3b82f6',
+        iconSize: 24,
+        filled: false,
+        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        showBackground: true,
+        strokeWidth: 1,
+      },
+    };
+    addComponent(newComponent);
+  };
+
+  // 添加条形码组件
+  const addBarcode = () => {
+    const newComponent = {
+      id: uuidv4(),
+      type: 'barcode' as const,
+      x: 500,
+      y: 400,
+      width: 200,
+      height: 60,
+      rotation: 0,
+      opacity: 1,
+      zIndex: 1,
+      selected: false,
+      locked: false,
+      data: {
+        content: '1234567890',
+        barcodeType: 'CODE128' as const,
+        width: 200,
+        height: 60,
+        showText: true,
+        barColor: '#000000',
+        backgroundColor: '#ffffff',
+        fontSize: 12,
+      },
+    };
+    addComponent(newComponent);
+  };
+
+  // 添加二维码组件
+  const addQRCode = () => {
+    const newComponent = {
+      id: uuidv4(),
+      type: 'qrcode' as const,
+      x: 550,
+      y: 450,
+      width: 100,
+      height: 100,
+      rotation: 0,
+      opacity: 1,
+      zIndex: 1,
+      selected: false,
+      locked: false,
+      data: {
+        content: 'https://example.com',
+        size: 100,
+        foregroundColor: '#000000',
+        backgroundColor: '#ffffff',
+        errorCorrectionLevel: 'M' as const,
+      },
+    };
+    addComponent(newComponent);
+  };
+
+  // 添加图表区域组件
+  const addChartSection = () => {
+    const newComponent = {
+      id: uuidv4(),
+      type: 'chart-section' as const,
+      x: 400,
+      y: 300,
+      width: 320,
+      height: 200,
+      rotation: 0,
+      opacity: 1,
+      zIndex: 1,
+      selected: false,
+      locked: false,
+      data: {
+        chartType: 'bar' as const,
+        data: [
+          { label: 'A', value: 100 },
+          { label: 'B', value: 80 },
+          { label: 'C', value: 120 },
+          { label: 'D', value: 90 },
+        ],
+        colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
+      },
+    };
+    addComponent(newComponent);
+  };
+
+  // 添加品牌页脚组件
+  const addBrandFooter = () => {
+    const newComponent = {
+      id: uuidv4(),
+      type: 'brand-footer' as const,
+      x: 400,
+      y: 600,
+      width: 400,
+      height: 120,
+      rotation: 0,
+      opacity: 1,
+      zIndex: 1,
+      selected: false,
+      locked: false,
+      data: {
+        logoText: 'BRAND',
+        company: '公司名称',
+        copyright: '© 2024 All Rights Reserved',
+        socialLinks: [
+          { platform: 'twitter', icon: '🐦' },
+          { platform: 'facebook', icon: '👤' },
+          { platform: 'linkedin', icon: '💼' },
+        ],
+        logoColor: '#ffffff',
+        textColor: '#94a3b8',
+        separatorColor: 'rgba(255, 255, 255, 0.2)',
+        bgColor: 'rgba(255, 255, 255, 0.05)',
+        showSeparator: true,
+      },
+    };
+    addComponent(newComponent);
+  };
+
+  // 添加信息区块组件
+  const addInfoBlock = () => {
+    const newComponent = {
+      id: uuidv4(),
+      type: 'info-block' as const,
+      x: 450,
+      y: 400,
+      width: 320,
+      height: 180,
+      rotation: 0,
+      opacity: 1,
+      zIndex: 1,
+      selected: false,
+      locked: false,
+      data: {
+        title: '信息区块',
+        subtitle: '数据统计',
+        infoItems: [
+          { label: '项目A', value: '100' },
+          { label: '项目B', value: '200' },
+          { label: '项目C', value: '150' },
+          { label: '项目D', value: '180' },
+        ],
+        bgColor: 'rgba(255, 255, 255, 0.05)',
+        borderColor: 'rgba(255, 255, 255, 0.1)',
+        titleColor: '#ffffff',
+        textColor: '#94a3b8',
+        columns: 2,
+        showGrid: true,
+      },
+    };
+    addComponent(newComponent);
+  };
+
   const categories: Category[] = [
     {
       id: 'basic',
@@ -983,6 +1184,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onExportSVG, onExportPNG }) =>
           icon: <Zap size={16} />,
           items: [
             { id: 'arrow', name: '箭头', icon: <span className="tool-icon">→</span>, action: addArrow },
+            { id: 'image', name: '图片', icon: <span className="tool-icon">🖼️</span>, action: addImage },
+            { id: 'icon', name: '图标', icon: <span className="tool-icon">⚙️</span>, action: addIcon },
           ]
         }
       ]
@@ -1000,6 +1203,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ onExportSVG, onExportPNG }) =>
             { id: 'header', name: '页眉组合', icon: <FileText size={18} />, action: addHeaderGroup },
             { id: 'content-card', name: '内容卡片', icon: <span className="tool-icon">📄</span>, action: addContentCard },
             { id: 'info-grid', name: '信息网格', icon: <span className="tool-icon">⊞</span>, action: addInfoGrid },
+            { id: 'chart-section', name: '图表区域', icon: <span className="tool-icon">📊</span>, action: addChartSection },
+            { id: 'brand-footer', name: '品牌页脚', icon: <span className="tool-icon">©️</span>, action: addBrandFooter },
+            { id: 'info-block', name: '信息区块', icon: <span className="tool-icon">📋</span>, action: addInfoBlock },
           ]
         },
         {
@@ -1018,8 +1224,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ onExportSVG, onExportPNG }) =>
           icon: <Zap size={16} />,
           items: [
             { id: 'divider', name: '分割线', icon: <span className="tool-icon">━</span>, action: addDivider },
-            { id: 'chart', name: '图表', icon: <BarChart3 size={18} />, action: () => {} },
-            { id: 'qr', name: '二维码', icon: <QrCode size={18} />, action: () => {} },
+            { id: 'chart', name: '图表', icon: <BarChart3 size={18} />, action: addChartSection },
+            { id: 'qr', name: '二维码', icon: <QrCode size={18} />, action: addQRCode },
+            { id: 'barcode', name: '条形码', icon: <span className="tool-icon">║▮</span>, action: addBarcode },
           ]
         }
       ]

@@ -76,10 +76,15 @@ export interface TextComponentData {
 // 图片组件数据
 export interface ImageComponentData {
   src?: string;
-  scale: number;
-  brightness: number;
-  contrast: number;
-  saturate: number;
+  scale?: number;
+  brightness?: number;
+  contrast?: number;
+  saturate?: number;
+  placeholderColor: string;
+  placeholderText: string;
+  showPlaceholder: boolean;
+  cornerRadius: number;
+  objectFit: 'cover' | 'contain' | 'fill';
 }
 
  // 图形组件数据
@@ -118,6 +123,18 @@ export interface QRCodeComponentData {
   foregroundColor: string;
   backgroundColor: string;
   errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H';
+}
+
+// 条形码组件数据
+export interface BarcodeComponentData {
+  content: string;
+  barcodeType: 'CODE128' | 'EAN13' | 'EAN8' | 'UPC';
+  width: number;
+  height: number;
+  showText: boolean;
+  barColor: string;
+  backgroundColor: string;
+  fontSize: number;
 }
 
 // 组合组件数据
@@ -350,6 +367,39 @@ export interface StatsChartData {
   bgColor?: string;
 }
 
+// 图表区域组件数据
+export interface ChartSectionData {
+  chartType: 'bar' | 'pie' | 'line';
+  data: Array<{ label: string; value: number }>;
+  colors?: string[];
+}
+
+// 品牌页脚组件数据
+export interface BrandFooterData {
+  logoText: string;
+  company: string;
+  copyright: string;
+  socialLinks: Array<{platform: string, icon: string}>;
+  logoColor: string;
+  textColor: string;
+  separatorColor: string;
+  bgColor: string;
+  showSeparator: boolean;
+}
+
+// 信息区块组件数据
+export interface InfoBlockData {
+  title: string;
+  subtitle?: string;
+  infoItems: Array<{label: string, value: string}>;
+  bgColor: string;
+  borderColor: string;
+  titleColor: string;
+  textColor: string;
+  columns: number;
+  showGrid: boolean;
+}
+
 // 引用卡片数据
 export interface QuoteCardData {
   quote: string;
@@ -513,6 +563,7 @@ export interface Component extends BaseComponent {
     | ChartComponentData
     | DecorationComponentData
     | QRCodeComponentData
+    | BarcodeComponentData
     | TriangleComponentData
     | StarComponentData
     | ArrowComponentData
@@ -540,7 +591,10 @@ export interface Component extends BaseComponent {
     | WatermarkComponentData
     | IconComponentData
     | CountdownComponentData
-    | TableComponentData;
+    | TableComponentData
+    | ChartSectionData
+    | BrandFooterData
+    | InfoBlockData;
 }
 
 // 画布配置
@@ -580,3 +634,6 @@ export interface AIGenerationResponse {
   data?: any;
   error?: string;
 }
+
+// Type guards for runtime component checking
+export * from './guards';

@@ -77,7 +77,17 @@ export const AtomicShape: React.FC<AtomicShapeProps> = ({
         y={y}
         width={width}
         height={height}
-        {...commonProps}
+        rotation={rotation}
+        opacity={opacity}
+        zIndex={zIndex}
+        draggable={!locked}
+        onClick={(e: any) => {
+          onSelect(e);
+        }}
+        onDragStart={() => {
+          onDragStart();
+        }}
+        onDragEnd={onDragEnd}
       >
         <Circle
           x={width / 2}
@@ -87,6 +97,18 @@ export const AtomicShape: React.FC<AtomicShapeProps> = ({
           stroke={selected ? '#ff8c5a' : data.borderColor}
           strokeWidth={selected ? 3 : data.borderWidth}
         />
+        {/* 选中边框 */}
+        {selected && (
+          <Circle
+            x={width / 2}
+            y={height / 2}
+            radius={width / 2 + 2}
+            fill="transparent"
+            stroke="#ff8c5a"
+            strokeWidth={2}
+            dash={[5, 5]}
+          />
+        )}
       </Group>
     );
   }

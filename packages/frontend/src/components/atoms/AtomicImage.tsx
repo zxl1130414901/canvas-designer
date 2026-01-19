@@ -1,15 +1,6 @@
-import React from 'react';
-import { Group, Rect, Text as KonvaText } from 'react-konva';
-import type { BaseComponent } from '../../types';
-
-interface ImageComponentData {
-  src?: string; // 图片URL或base64
-  placeholderColor: string;
-  placeholderText: string;
-  showPlaceholder: boolean;
-  cornerRadius: number;
-  objectFit: 'cover' | 'contain' | 'fill';
-}
+import React, { useEffect, useState } from 'react';
+import { Group, Rect, Text as KonvaText, Image as KonvaImage } from 'react-konva';
+import type { BaseComponent, ImageComponentData } from '../../types';
 
 interface AtomicImageProps extends BaseComponent {
   data: ImageComponentData;
@@ -34,6 +25,30 @@ export const AtomicImage: React.FC<AtomicImageProps> = ({
   onDragEnd,
   onSelect,
 }) => {
+  const [image, setImage] = useState<HTMLImageElement | null>(null);
+
+  useEffect(() => {
+    if (data.src && !data.showPlaceholder) {
+      const img = new window.Image();
+      img.src = data.src;
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        setImage(img);
+      };
+      img.onerror = () => {
+        console.error('Failed to load image:', data.src);
+        setImage(null);
+      };
+      return () => {
+        setImage(null);
+      };
+    } else {
+      setImage(null);
+    }
+  }, [data.src, data.showPlaceholder]);
+
+  const cornerRadius = data.cornerRadius || 0;
+
   return (
     <Group
       id={id}
@@ -52,71 +67,77 @@ export const AtomicImage: React.FC<AtomicImageProps> = ({
       }}
       onDragEnd={onDragEnd}
     >
-      {/* 占位符背景 */}
-      <Rect
-        width={width}
-        height={height}
-        fill={data.placeholderColor || 'rgba(59, 130, 246, 0.2)'}
-        cornerRadius={data.cornerRadius || 8}
-      />
-
-      {/* 占位符图标和文字 */}
-      {data.showPlaceholder && (
-        <Group>
-          {/* 简单图片图标 */}
-          <Rect
-            x={width / 2 - 24}
-            y={height / 2 - 30}
-            width={48}
-            height={36}
-            fill="rgba(255, 255, 255, 0.1)"
-            cornerRadius={4}
-          />
-          <Rect
-            x={width / 2 - 20}
-            y={height / 2 - 26}
-            width={40}
-            height={28}
-            fill="transparent"
-            stroke="rgba(255, 255, 255, 0.3)"
-            strokeWidth={2}
-            cornerRadius={2}
-          />
-          {/* 山峰 */}
-          <Rect
-            x={width / 2 - 12}
-            y={height / 2 - 10}
-            width={0}
-            height={0}
-            fill="transparent"
-          />
-          
-          {/* 占位文字 */}
-          <KonvaText
-            x={0}
-            y={height / 2 + 16}
+      {image ? (
+        <>
+          <KonvaImage
+            image={image}
             width={width}
-            text={data.placeholderText || '点击上传图片'}
-            fontSize={14}
-            fontFamily="Inter"
-            fill="rgba(255, 255, 255, 0.5)"
-            align="center"
+            height={height}
+            cornerRadius={cornerRadius}
           />
-        </Group>
-      )}
+          {selected && (
+            <Rect
+              width={width}
+              height={height}
+              stroke="#ff8c5a"
+              strokeWidth={2}
+              cornerRadius={cornerRadius}
+              dash={[5, 5]}
+              listening={false}
+            />
+          )}
+        </>
+      ) : (
+        <>
+          <Rect
+            width={width}
+            height={height}
+            fill={data.placeholderColor || 'rgba(59, 130, 246, 0.2)'}
+            stroke={selected ? '#ff8c5a' : 'rgba(59, 130, 246, 0.4)'}
+            strokeWidth={selected ? 2 : 1}
+            cornerRadius={cornerRadius}
+            dash={data.showPlaceholder ? [8, 8] : undefined}
+          />
 
-      {/* 选中边框 */}
-      {selected && (
-        <Rect
-          x={0}
-          y={0}
-          width={width}
-          height={height}
-          stroke="#ff8c5a"
-          strokeWidth={2}
-          cornerRadius={data.cornerRadius || 8}
-          dash={[5, 5]}
-        />
+          {data.showPlaceholder && (
+            <>
+              {/* 简单图片图标 */}
+              <Rect
+                x={width / 2 - 24}
+                y={height / 2 - 30}
+                width={48}
+                height={36}
+                fill="rgba(255, 255, 255, 0.1)"
+                cornerRadius={4}
+                listening={false}
+              />
+              <Rect
+                x={width / 2 - 20}
+                y={height / 2 - 26}
+                width={40}
+                height={28}
+                fill="transparent"
+                stroke="rgba(255, 255, 255, 0.3)"
+                strokeWidth={2}
+                cornerRadius={2}
+                listening={false}
+              />
+
+              {/* 占位文字 */}
+              <KonvaText
+                x={0}
+                y={height / 2 + 16}
+                width={width}
+                text={data.placeholderText || '点击上传图片'}
+                fontSize={14}
+                fontFamily="Inter"
+                fill="rgba(255, 255, 255, 0.5)"
+                align="center"
+                listening={false}
+              />
+            </>
+          )}
+        </>
       )}
     </Group>
   );
