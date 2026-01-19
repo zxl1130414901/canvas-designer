@@ -13,7 +13,6 @@ export const PropertyPanel: React.FC = () => {
     changeZIndex,
     combineComponents,
     separateComponents,
-    selectComponent,
   } = useStore();
 
   // 获取选中的组件（支持多选和单选）
@@ -26,7 +25,9 @@ export const PropertyPanel: React.FC = () => {
   // 判断是否是组合容器（包括用户组合和预定义的高级组件）
   const isComposite = selectedComponent && (
     selectedComponent.type.includes('-group') ||
-    ['content-card', 'info-grid', 'callout-box', 'timeline-block', 'stats-card', 'divider', 'header-group'].includes(selectedComponent.type)
+    ['content-card', 'info-grid', 'callout-box', 'timeline-block', 'stats-card', 'divider', 'header-group'].includes(selectedComponent.type) ||
+    // 新组合组件
+    ['new-title-card', 'new-data-card', 'new-user-card', 'new-product-card', 'new-timeline', 'new-stats-chart', 'new-quote-card', 'new-section-divider'].includes(selectedComponent.type)
   );
 
   if (!selectedComponent && !hasMultipleSelection) {
@@ -873,197 +874,936 @@ export const PropertyPanel: React.FC = () => {
               </svg>
               分离组件
             </button>
-            
-            {/* 容器基本属性 */}
+          </div>
+        )}
+
+        {/* ========== 新增原子组件属性面板 ========== */}
+
+        {/* 进度条属性 */}
+        {comp.type === 'progress-bar' && (
+          <div className="property-group">
+            <h4>进度条属性</h4>
             <div className="property-grid">
               <div className="property-item">
-                <label>X坐标</label>
+                <label>进度 (%)</label>
                 <input
                   type="number"
-                  value={Math.round(comp.x)}
-                  onChange={(e) => handleUpdate({ x: Number(e.target.value) })}
+                  min="0"
+                  max="100"
+                  value={(comp.data as any).progress || 0}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, progress: Number(e.target.value) } })}
                   className="property-input"
                 />
               </div>
               <div className="property-item">
-                <label>Y坐标</label>
+                <label>条高度</label>
                 <input
                   type="number"
-                  value={Math.round(comp.y)}
-                  onChange={(e) => handleUpdate({ y: Number(e.target.value) })}
-                  className="property-input"
-                />
-              </div>
-              <div className="property-item">
-                <label>宽度</label>
-                <input
-                  type="number"
-                  value={Math.round(comp.width)}
-                  onChange={(e) => handleUpdate({ width: Number(e.target.value) })}
-                  className="property-input"
-                />
-              </div>
-              <div className="property-item">
-                <label>高度</label>
-                <input
-                  type="number"
-                  value={Math.round(comp.height)}
-                  onChange={(e) => handleUpdate({ height: Number(e.target.value) })}
+                  value={(comp.data as any).barHeight || 20}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, barHeight: Number(e.target.value) } })}
                   className="property-input"
                 />
               </div>
             </div>
+            <div className="property-item">
+              <label>进度颜色</label>
+              <input
+                type="color"
+                value={(comp.data as any).barColor || '#ff6b35'}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, barColor: e.target.value } })}
+                className="property-color"
+              />
+            </div>
+            <div className="property-item">
+              <label>背景颜色</label>
+              <input
+                type="color"
+                value={(comp.data as any).backgroundColor || 'rgba(255,255,255,0.1)'}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, backgroundColor: e.target.value } })}
+                className="property-color"
+              />
+            </div>
+            <div className="property-item">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={(comp.data as any).showLabel !== false}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, showLabel: e.target.checked } })}
+                />
+                显示标签
+              </label>
+            </div>
+          </div>
+        )}
 
-            {/* 容器内子组件列表 (仅适用于有子组件的组合组件,如header-group) */}
-            {(() => {
-              const childIds = (comp.data as any).childIds || [];
-              if (childIds.length === 0) return null; // 没有子组件则不显示
+        {/* 星级评分属性 */}
+        {comp.type === 'rating' && (
+          <div className="property-group">
+            <h4>星级评分属性</h4>
+            <div className="property-grid">
+              <div className="property-item">
+                <label>当前评分</label>
+                <input
+                  type="number"
+                  min="0"
+                  max={(comp.data as any).maxStars || 5}
+                  value={(comp.data as any).rating || 0}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, rating: Number(e.target.value) } })}
+                  className="property-input"
+                />
+              </div>
+              <div className="property-item">
+                <label>最大星级</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={(comp.data as any).maxStars || 5}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, maxStars: Number(e.target.value) } })}
+                  className="property-input"
+                />
+              </div>
+            </div>
+            <div className="property-grid">
+              <div className="property-item">
+                <label>星级颜色</label>
+                <input
+                  type="color"
+                  value={(comp.data as any).starColor || '#fbbf24'}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, starColor: e.target.value } })}
+                  className="property-color"
+                />
+              </div>
+              <div className="property-item">
+                <label>空星颜色</label>
+                <input
+                  type="color"
+                  value={(comp.data as any).emptyColor || 'rgba(255,255,255,0.2)'}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, emptyColor: e.target.value } })}
+                  className="property-color"
+                />
+              </div>
+            </div>
+            <div className="property-item">
+              <label>星级大小</label>
+              <input
+                type="number"
+                value={(comp.data as any).starSize || 24}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, starSize: Number(e.target.value) } })}
+                className="property-input"
+              />
+            </div>
+            <div className="property-item">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={(comp.data as any).showLabel !== false}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, showLabel: e.target.checked } })}
+                />
+                显示标签
+              </label>
+            </div>
+            {(comp.data as any).showLabel && (
+              <div className="property-item">
+                <label>标签文字</label>
+                <input
+                  type="text"
+                  value={(comp.data as any).labelText || ''}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, labelText: e.target.value } })}
+                  className="property-input"
+                />
+              </div>
+            )}
+          </div>
+        )}
 
-              const childComponents = canvas.components.filter(c => childIds.includes(c.id));
-              
-              if (childComponents.length === 0) {
-                return (
-                  <p className="hint" style={{ marginTop: '12px' }}>
-                    容器内无子组件，点击"分离"按钮拆分成独立组件
-                  </p>
-                );
-              }
-              
-              return (
-                <div style={{ marginTop: '16px' }}>
-                  <p className="hint">容器内子组件：{childComponents.length} 个</p>
-                  
-                  {childComponents.map((child, index) => (
-                    <div 
-                      key={child.id} 
-                      className="property-group"
-                      style={{ 
-                        border: '1px solid rgba(255, 107, 53, 0.3)', 
-                        borderRadius: '8px',
-                        padding: '12px',
-                        marginTop: '12px',
-                        background: 'rgba(255, 107, 53, 0.05)'
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                        <h5 style={{ margin: 0, color: '#ff8c5a', fontSize: '13px' }}>
-                          {child.type} {index + 1}
-                        </h5>
-                        <button
-                          onClick={() => selectComponent(child.id)}
-                          style={{
-                            background: 'rgba(255, 107, 53, 0.2)',
-                            border: '1px solid rgba(255, 107, 53, 0.4)',
-                            color: '#ff8c5a',
-                            borderRadius: '4px',
-                            padding: '4px 8px',
-                            fontSize: '12px',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          选中编辑
-                        </button>
-                      </div>
-                      
-                      {/* 子组件相对位置 */}
-                      <div className="property-grid">
-                        <div className="property-item">
-                          <label>相对X</label>
-                          <input
-                            type="number"
-                            value={Math.round(child.x - comp.x)}
-                            onChange={(e) => {
-                              const newRelativeX = Number(e.target.value);
-                              updateComponent(child.id, { x: comp.x + newRelativeX });
-                            }}
-                            className="property-input"
-                          />
-                        </div>
-                        <div className="property-item">
-                          <label>相对Y</label>
-                          <input
-                            type="number"
-                            value={Math.round(child.y - comp.y)}
-                            onChange={(e) => {
-                              const newRelativeY = Number(e.target.value);
-                              updateComponent(child.id, { y: comp.y + newRelativeY });
-                            }}
-                            className="property-input"
-                          />
-                        </div>
-                        <div className="property-item">
-                          <label>宽度</label>
-                          <input
-                            type="number"
-                            value={Math.round(child.width)}
-                            onChange={(e) => updateComponent(child.id, { width: Number(e.target.value) })}
-                            className="property-input"
-                          />
-                        </div>
-                        <div className="property-item">
-                          <label>高度</label>
-                          <input
-                            type="number"
-                            value={Math.round(child.height)}
-                            onChange={(e) => updateComponent(child.id, { height: Number(e.target.value) })}
-                            className="property-input"
-                          />
-                        </div>
-                      </div>
+        {/* 背景块属性 */}
+        {comp.type === 'background' && (
+          <div className="property-group">
+            <h4>背景块属性</h4>
+            <div className="property-item">
+              <label>背景颜色</label>
+              <input
+                type="color"
+                value={(comp.data as any).fillColor || '#ffffff'}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, fillColor: e.target.value } })}
+                className="property-color"
+              />
+            </div>
+            <div className="property-grid">
+              <div className="property-item">
+                <label>圆角</label>
+                <input
+                  type="number"
+                  value={(comp.data as any).cornerRadius || 0}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, cornerRadius: Number(e.target.value) } })}
+                  className="property-input"
+                />
+              </div>
+              <div className="property-item">
+                <label>透明度</label>
+                <input
+                  type="number"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  value={(comp.data as any).opacity || 1}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, opacity: Number(e.target.value) } })}
+                  className="property-input"
+                />
+              </div>
+            </div>
+            <div className="property-item">
+              <label>边框颜色</label>
+              <input
+                type="color"
+                value={(comp.data as any).borderColor || ''}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, borderColor: e.target.value } })}
+                className="property-color"
+              />
+            </div>
+            <div className="property-item">
+              <label>边框宽度</label>
+              <input
+                type="number"
+                value={(comp.data as any).borderWidth || 0}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, borderWidth: Number(e.target.value) } })}
+                className="property-input"
+              />
+            </div>
+          </div>
+        )}
 
-                      {/* 子组件特有属性 */}
-                      {child.type === 'text' && (
-                        <div style={{ marginTop: '12px' }}>
-                          <div className="property-item">
-                            <label>文本内容</label>
-                            <input
-                              type="text"
-                              value={(child.data as any).text || ''}
-                              onChange={(e) => updateComponent(child.id, { data: { ...child.data, text: e.target.value } })}
-                              className="property-input"
-                            />
-                          </div>
-                          <div className="property-grid" style={{ marginTop: '8px' }}>
-                            <div className="property-item">
-                              <label>字号</label>
-                              <input
-                                type="number"
-                                value={(child.data as any).fontSize || 16}
-                                onChange={(e) => updateComponent(child.id, { data: { ...child.data, fontSize: Number(e.target.value) } })}
-                                className="property-input"
-                              />
-                            </div>
-                            <div className="property-item">
-                              <label>颜色</label>
-                              <input
-                                type="color"
-                                value={(child.data as any).color || '#ffffff'}
-                                onChange={(e) => updateComponent(child.id, { data: { ...child.data, color: e.target.value } })}
-                                className="property-color"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      )}
+        {/* 边框装饰属性 */}
+        {comp.type === 'border' && (
+          <div className="property-group">
+            <h4>边框装饰属性</h4>
+            <div className="property-item">
+              <label>边框颜色</label>
+              <input
+                type="color"
+                value={(comp.data as any).borderColor || '#ff6b35'}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, borderColor: e.target.value } })}
+                className="property-color"
+              />
+            </div>
+            <div className="property-grid">
+              <div className="property-item">
+                <label>边框宽度</label>
+                <input
+                  type="number"
+                  value={(comp.data as any).borderWidth || 2}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, borderWidth: Number(e.target.value) } })}
+                  className="property-input"
+                />
+              </div>
+              <div className="property-item">
+                <label>圆角</label>
+                <input
+                  type="number"
+                  value={(comp.data as any).cornerRadius || 0}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, cornerRadius: Number(e.target.value) } })}
+                  className="property-input"
+                />
+              </div>
+            </div>
+            <div className="property-item">
+              <label>边框样式</label>
+              <select
+                value={(comp.data as any).style || 'solid'}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, style: e.target.value } })}
+                className="property-select"
+              >
+                <option value="solid">实线</option>
+                <option value="dashed">虚线</option>
+                <option value="dotted">点线</option>
+                <option value="double">双线</option>
+              </select>
+            </div>
+          </div>
+        )}
 
-                      {(child.type === 'rectangle' || child.type === 'circle' || child.type === 'line') && (
-                        <div style={{ marginTop: '12px' }}>
-                          <div className="property-item">
-                            <label>填充颜色</label>
-                            <input
-                              type="color"
-                              value={(child.data as any).fillColor || '#ffffff'}
-                              onChange={(e) => updateComponent(child.id, { data: { ...child.data, fillColor: e.target.value } })}
-                              className="property-color"
-                            />
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              );
-            })()}
+        {/* 圆点标记属性 */}
+        {comp.type === 'dot-marker' && (
+          <div className="property-group">
+            <h4>圆点标记属性</h4>
+            <div className="property-grid">
+              <div className="property-item">
+                <label>圆点颜色</label>
+                <input
+                  type="color"
+                  value={(comp.data as any).dotColor || '#ff6b35'}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, dotColor: e.target.value } })}
+                  className="property-color"
+                />
+              </div>
+              <div className="property-item">
+                <label>圆点大小</label>
+                <input
+                  type="number"
+                  value={(comp.data as any).dotSize || 12}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, dotSize: Number(e.target.value) } })}
+                  className="property-input"
+                />
+              </div>
+            </div>
+            <div className="property-item">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={(comp.data as any).filled !== false}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, filled: e.target.checked } })}
+                />
+                填充模式
+              </label>
+            </div>
+          </div>
+        )}
+
+        {/* 水印属性 */}
+        {comp.type === 'watermark' && (
+          <div className="property-group">
+            <h4>水印属性</h4>
+            <div className="property-item">
+              <label>水印文字</label>
+              <input
+                type="text"
+                value={(comp.data as any).text || ''}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, text: e.target.value } })}
+                className="property-input"
+              />
+            </div>
+            <div className="property-grid">
+              <div className="property-item">
+                <label>字号</label>
+                <input
+                  type="number"
+                  value={(comp.data as any).fontSize || 24}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, fontSize: Number(e.target.value) } })}
+                  className="property-input"
+                />
+              </div>
+              <div className="property-item">
+                <label>透明度</label>
+                <input
+                  type="number"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  value={(comp.data as any).opacity || 0.3}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, opacity: Number(e.target.value) } })}
+                  className="property-input"
+                />
+              </div>
+            </div>
+            <div className="property-item">
+              <label>颜色</label>
+              <input
+                type="color"
+                value={(comp.data as any).color || '#ffffff'}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, color: e.target.value } })}
+                className="property-color"
+              />
+            </div>
+            <div className="property-item">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={(comp.data as any).repeat !== false}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, repeat: e.target.checked } })}
+                />
+                重复显示
+              </label>
+            </div>
+            <div className="property-item">
+              <label>旋转角度</label>
+              <input
+                type="number"
+                value={(comp.data as any).rotation || 45}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, rotation: Number(e.target.value) } })}
+                className="property-input"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* 倒计时属性 */}
+        {comp.type === 'countdown' && (
+          <div className="property-group">
+            <h4>倒计时属性</h4>
+            <div className="property-grid">
+              <div className="property-item">
+                <label>天</label>
+                <input
+                  type="number"
+                  value={(comp.data as any).days || 0}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, days: Number(e.target.value) } })}
+                  className="property-input"
+                />
+              </div>
+              <div className="property-item">
+                <label>时</label>
+                <input
+                  type="number"
+                  value={(comp.data as any).hours || 0}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, hours: Number(e.target.value) } })}
+                  className="property-input"
+                />
+              </div>
+              <div className="property-item">
+                <label>分</label>
+                <input
+                  type="number"
+                  value={(comp.data as any).minutes || 0}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, minutes: Number(e.target.value) } })}
+                  className="property-input"
+                />
+              </div>
+              <div className="property-item">
+                <label>秒</label>
+                <input
+                  type="number"
+                  value={(comp.data as any).seconds || 0}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, seconds: Number(e.target.value) } })}
+                  className="property-input"
+                />
+              </div>
+            </div>
+            <div className="property-grid">
+              <div className="property-item">
+                <label>数字颜色</label>
+                <input
+                  type="color"
+                  value={(comp.data as any).numberColor || '#ffffff'}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, numberColor: e.target.value } })}
+                  className="property-color"
+                />
+              </div>
+              <div className="property-item">
+                <label>背景颜色</label>
+                <input
+                  type="color"
+                  value={(comp.data as any).backgroundColor || 'rgba(255,107,53,0.1)'}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, backgroundColor: e.target.value } })}
+                  className="property-color"
+                />
+              </div>
+            </div>
+            <div className="property-item">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={(comp.data as any).showLabels !== false}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, showLabels: e.target.checked } })}
+                />
+                显示标签
+              </label>
+            </div>
+          </div>
+        )}
+
+        {/* 数据表格属性 */}
+        {comp.type === 'table' && (
+          <div className="property-group">
+            <h4>数据表格属性</h4>
+            <div className="property-item">
+              <label>表头背景</label>
+              <input
+                type="color"
+                value={(comp.data as any).headerBgColor || 'rgba(255,107,53,0.2)'}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, headerBgColor: e.target.value } })}
+                className="property-color"
+              />
+            </div>
+            <div className="property-item">
+              <label>表头文字</label>
+              <input
+                type="color"
+                value={(comp.data as any).headerColor || '#ffffff'}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, headerColor: e.target.value } })}
+                className="property-color"
+              />
+            </div>
+            <div className="property-grid">
+              <div className="property-item">
+                <label>字号</label>
+                <input
+                  type="number"
+                  value={(comp.data as any).fontSize || 12}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, fontSize: Number(e.target.value) } })}
+                  className="property-input"
+                />
+              </div>
+              <div className="property-item">
+                <label>圆角</label>
+                <input
+                  type="number"
+                  value={(comp.data as any).cornerRadius || 4}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, cornerRadius: Number(e.target.value) } })}
+                  className="property-input"
+                />
+              </div>
+            </div>
+            <div className="property-item">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={(comp.data as any).showHeaders !== false}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, showHeaders: e.target.checked } })}
+                />
+                显示表头
+              </label>
+            </div>
+          </div>
+        )}
+
+        {/* 图标属性 */}
+        {comp.type === 'icon' && (
+          <div className="property-group">
+            <h4>图标属性</h4>
+            <div className="property-item">
+              <label>图标类型</label>
+              <select
+                value={(comp.data as any).iconType || 'star'}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, iconType: e.target.value } })}
+                className="property-select"
+              >
+                <option value="image">图片</option>
+                <option value="video">视频</option>
+                <option value="link">链接</option>
+                <option value="email">邮箱</option>
+                <option value="phone">电话</option>
+                <option value="location">位置</option>
+                <option value="calendar">日历</option>
+                <option value="user">用户</option>
+                <option value="gear">齿轮</option>
+                <option value="check">勾选</option>
+                <option value="warning">警告</option>
+                <option value="info">信息</option>
+                <option value="question">问号</option>
+                <option value="star">星星</option>
+                <option value="heart">心形</option>
+                <option value="cart">购物车</option>
+                <option value="search">搜索</option>
+                <option value="plus">加号</option>
+                <option value="minus">减号</option>
+                <option value="close">关闭</option>
+                <option value="menu">菜单</option>
+              </select>
+            </div>
+            <div className="property-grid">
+              <div className="property-item">
+                <label>图标颜色</label>
+                <input
+                  type="color"
+                  value={(comp.data as any).iconColor || '#ffffff'}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, iconColor: e.target.value } })}
+                  className="property-color"
+                />
+              </div>
+              <div className="property-item">
+                <label>图标大小</label>
+                <input
+                  type="number"
+                  value={(comp.data as any).iconSize || 24}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, iconSize: Number(e.target.value) } })}
+                  className="property-input"
+                />
+              </div>
+            </div>
+            <div className="property-item">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={(comp.data as any).filled !== false}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, filled: e.target.checked } })}
+                />
+                填充模式
+              </label>
+            </div>
+            <div className="property-item">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={(comp.data as any).showBackground || false}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, showBackground: e.target.checked } })}
+                />
+                显示背景
+              </label>
+            </div>
+          </div>
+        )}
+
+        {/* ========== 新组合组件属性面板 ========== */}
+
+        {/* 标题卡片属性 */}
+        {(comp.type === 'new-title-card') && (
+          <div className="property-group">
+            <h4>标题卡片属性</h4>
+            <div className="property-item">
+              <label>标题文字</label>
+              <input
+                type="text"
+                value={(comp.data as any).title || ''}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, title: e.target.value } })}
+                className="property-input"
+              />
+            </div>
+            <div className="property-item">
+              <label>副标题</label>
+              <input
+                type="text"
+                value={(comp.data as any).subtitle || ''}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, subtitle: e.target.value } })}
+                className="property-input"
+              />
+            </div>
+            <div className="property-grid">
+              <div className="property-item">
+                <label>标题颜色</label>
+                <input
+                  type="color"
+                  value={(comp.data as any).titleColor || '#ffffff'}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, titleColor: e.target.value } })}
+                  className="property-color"
+                />
+              </div>
+              <div className="property-item">
+                <label>背景样式</label>
+                <select
+                  value={(comp.data as any).bgStyle || 'gradient'}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, bgStyle: e.target.value } })}
+                  className="property-select"
+                >
+                  <option value="gradient">渐变</option>
+                  <option value="solid">实色</option>
+                  <option value="outline">轮廓</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 数据卡片属性 */}
+        {(comp.type === 'new-data-card') && (
+          <div className="property-group">
+            <h4>数据卡片属性</h4>
+            <div className="property-item">
+              <label>标签文字</label>
+              <input
+                type="text"
+                value={(comp.data as any).label || ''}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, label: e.target.value } })}
+                className="property-input"
+              />
+            </div>
+            <div className="property-item">
+              <label>数值</label>
+              <input
+                type="text"
+                value={(comp.data as any).value || ''}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, value: e.target.value } })}
+                className="property-input"
+              />
+            </div>
+            <div className="property-grid">
+              <div className="property-item">
+                <label>数值颜色</label>
+                <input
+                  type="color"
+                  value={(comp.data as any).valueColor || '#ffffff'}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, valueColor: e.target.value } })}
+                  className="property-color"
+                />
+              </div>
+              <div className="property-item">
+                <label>标签颜色</label>
+                <input
+                  type="color"
+                  value={(comp.data as any).labelColor || '#94a3b8'}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, labelColor: e.target.value } })}
+                  className="property-color"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 用户卡片属性 */}
+        {(comp.type === 'new-user-card') && (
+          <div className="property-group">
+            <h4>用户卡片属性</h4>
+            <div className="property-item">
+              <label>用户名称</label>
+              <input
+                type="text"
+                value={(comp.data as any).name || ''}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, name: e.target.value } })}
+                className="property-input"
+              />
+            </div>
+            <div className="property-item">
+              <label>职位标题</label>
+              <input
+                type="text"
+                value={(comp.data as any).title || ''}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, title: e.target.value } })}
+                className="property-input"
+              />
+            </div>
+            <div className="property-item">
+              <label>个人简介</label>
+              <input
+                type="text"
+                value={(comp.data as any).bio || ''}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, bio: e.target.value } })}
+                className="property-input"
+              />
+            </div>
+            <div className="property-item">
+              <label>名称颜色</label>
+              <input
+                type="color"
+                value={(comp.data as any).nameColor || '#ffffff'}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, nameColor: e.target.value } })}
+                className="property-color"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* 产品卡片属性 */}
+        {(comp.type === 'new-product-card') && (
+          <div className="property-group">
+            <h4>产品卡片属性</h4>
+            <div className="property-item">
+              <label>产品标题</label>
+              <input
+                type="text"
+                value={(comp.data as any).title || ''}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, title: e.target.value } })}
+                className="property-input"
+              />
+            </div>
+            <div className="property-item">
+              <label>价格</label>
+              <input
+                type="text"
+                value={(comp.data as any).price || ''}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, price: e.target.value } })}
+                className="property-input"
+              />
+            </div>
+            <div className="property-item">
+              <label>原价</label>
+              <input
+                type="text"
+                value={(comp.data as any).originalPrice || ''}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, originalPrice: e.target.value } })}
+                className="property-input"
+              />
+            </div>
+            <div className="property-grid">
+              <div className="property-item">
+                <label>标题颜色</label>
+                <input
+                  type="color"
+                  value={(comp.data as any).titleColor || '#ffffff'}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, titleColor: e.target.value } })}
+                  className="property-color"
+                />
+              </div>
+              <div className="property-item">
+                <label>价格颜色</label>
+                <input
+                  type="color"
+                  value={(comp.data as any).priceColor || '#ff6b35'}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, priceColor: e.target.value } })}
+                  className="property-color"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 时间线属性 */}
+        {(comp.type === 'new-timeline') && (
+          <div className="property-group">
+            <h4>时间线属性</h4>
+            <div className="property-item">
+              <label>日期</label>
+              <input
+                type="text"
+                value={(comp.data as any).date || ''}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, date: e.target.value } })}
+                className="property-input"
+              />
+            </div>
+            <div className="property-item">
+              <label>标题</label>
+              <input
+                type="text"
+                value={(comp.data as any).title || ''}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, title: e.target.value } })}
+                className="property-input"
+              />
+            </div>
+            <div className="property-item">
+              <label>描述</label>
+              <input
+                type="text"
+                value={(comp.data as any).description || ''}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, description: e.target.value } })}
+                className="property-input"
+              />
+            </div>
+            <div className="property-item">
+              <label>位置</label>
+              <select
+                value={(comp.data as any).position || 'left'}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, position: e.target.value } })}
+                className="property-select"
+              >
+                <option value="left">左侧</option>
+                <option value="center">居中</option>
+                <option value="right">右侧</option>
+              </select>
+            </div>
+          </div>
+        )}
+
+        {/* 统计图表属性 */}
+        {(comp.type === 'new-stats-chart') && (
+          <div className="property-group">
+            <h4>统计图表属性</h4>
+            <div className="property-item">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={(comp.data as any).showValues !== false}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, showValues: e.target.checked } })}
+                />
+                显示数值
+              </label>
+            </div>
+            <div className="property-item">
+              <label>标签颜色</label>
+              <input
+                type="color"
+                value={(comp.data as any).labelColor || '#94a3b8'}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, labelColor: e.target.value } })}
+                className="property-color"
+              />
+            </div>
+            <div className="property-item">
+              <label>数值颜色</label>
+              <input
+                type="color"
+                value={(comp.data as any).valueColor || '#ffffff'}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, valueColor: e.target.value } })}
+                className="property-color"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* 引用卡片属性 */}
+        {(comp.type === 'new-quote-card') && (
+          <div className="property-group">
+            <h4>引用卡片属性</h4>
+            <div className="property-item">
+              <label>引用内容</label>
+              <input
+                type="text"
+                value={(comp.data as any).quote || ''}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, quote: e.target.value } })}
+                className="property-input"
+              />
+            </div>
+            <div className="property-item">
+              <label>作者</label>
+              <input
+                type="text"
+                value={(comp.data as any).author || ''}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, author: e.target.value } })}
+                className="property-input"
+              />
+            </div>
+            <div className="property-item">
+              <label>来源</label>
+              <input
+                type="text"
+                value={(comp.data as any).source || ''}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, source: e.target.value } })}
+                className="property-input"
+              />
+            </div>
+            <div className="property-grid">
+              <div className="property-item">
+                <label>引用颜色</label>
+                <input
+                  type="color"
+                  value={(comp.data as any).quoteColor || '#ffffff'}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, quoteColor: e.target.value } })}
+                  className="property-color"
+                />
+              </div>
+              <div className="property-item">
+                <label>样式</label>
+                <select
+                  value={(comp.data as any).style || 'simple'}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, style: e.target.value } })}
+                  className="property-select"
+                >
+                  <option value="simple">简约</option>
+                  <option value="border">边框</option>
+                  <option value="icon">图标</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 分隔装饰属性 */}
+        {(comp.type === 'new-section-divider') && (
+          <div className="property-group">
+            <h4>分隔装饰属性</h4>
+            <div className="property-item">
+              <label>样式</label>
+              <select
+                value={(comp.data as any).style || 'line'}
+                onChange={(e) => handleUpdate({ data: { ...comp.data, style: e.target.value } })}
+                className="property-select"
+              >
+                <option value="line">线条</option>
+                <option value="dashed">虚线</option>
+                <option value="dotted">点线</option>
+                <option value="gradient">渐变</option>
+                <option value="dots">圆点</option>
+                <option value="wave">波浪</option>
+                <option value="stars">星星</option>
+              </select>
+            </div>
+            <div className="property-grid">
+              <div className="property-item">
+                <label>线条颜色</label>
+                <input
+                  type="color"
+                  value={(comp.data as any).color || '#ff8c5a'}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, color: e.target.value } })}
+                  className="property-color"
+                />
+              </div>
+              <div className="property-item">
+                <label>粗细</label>
+                <input
+                  type="number"
+                  value={(comp.data as any).thickness || 2}
+                  onChange={(e) => handleUpdate({ data: { ...comp.data, thickness: Number(e.target.value) } })}
+                  className="property-input"
+                />
+              </div>
+            </div>
           </div>
         )}
       </div>

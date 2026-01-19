@@ -62,6 +62,7 @@ export const CompositeCalloutBox: React.FC<CompositeCalloutBoxProps> = ({
       zIndex={zIndex}
       draggable={!locked}
       onClick={(e: any) => {
+        e.cancelBubble = true; // Stop event propagation to prevent multiple selection
         onSelect(e);
       }}
       onDragStart={() => {
@@ -99,7 +100,7 @@ export const CompositeCalloutBox: React.FC<CompositeCalloutBoxProps> = ({
         x={padding}
         y={padding + 24}
         width={width - padding * 2}
-        text="Callout content goes here"
+        text={data.content || ''}
         fontSize={13}
         fontFamily="Inter"
         fill="#94a3b8"

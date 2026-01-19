@@ -8,6 +8,14 @@ import { AtomicTriangle } from '../atoms/AtomicTriangle';
 import { AtomicStar } from '../atoms/AtomicStar';
 import { AtomicArrow } from '../atoms/AtomicArrow';
 import { AtomicTag } from '../atoms/AtomicTag';
+import { AtomicProgressBar } from '../atoms/AtomicProgressBar';
+import { AtomicRating } from '../atoms/AtomicRating';
+import { AtomicBackground } from '../atoms/AtomicBackground';
+import { AtomicBorder } from '../atoms/AtomicBorder';
+import { AtomicDotMarker } from '../atoms/AtomicDotMarker';
+import { AtomicWatermark } from '../atoms/AtomicWatermark';
+import { AtomicCountdown } from '../atoms/AtomicCountdown';
+import { AtomicTable } from '../atoms/AtomicTable';
 import { CompositeHeader } from '../composite/CompositeHeader';
 import { CompositeContentCard } from '../composite/CompositeContentCard';
 import { CompositeInfoGrid } from '../composite/CompositeInfoGrid';
@@ -15,6 +23,7 @@ import { CompositeCalloutBox } from '../composite/CompositeCalloutBox';
 import { CompositeDivider } from '../composite/CompositeDivider';
 import { CompositeTimelineBlock } from '../composite/CompositeTimelineBlock';
 import { CompositeStatsCard } from '../composite/CompositeStatsCard';
+import { NewTitleCard, NewDataCard, NewUserCard, NewProductCard, NewTimeline, NewStatsChart, NewQuoteCard, NewSectionDivider } from '../new-composite';
 
 interface CanvasProps {
   width?: number;
@@ -202,67 +211,6 @@ export const Canvas = forwardRef<CanvasRef, CanvasProps>(
             />
           );
         }
-      }
-
-      // 文本组件
-      if (comp.type === 'text') {
-        return (
-          <AtomicText
-            key={comp.id}
-            id={comp.id}
-            type={comp.type}
-            x={comp.x}
-            y={comp.y}
-            width={comp.width}
-            height={comp.height}
-            rotation={comp.rotation}
-            opacity={comp.opacity}
-            zIndex={comp.zIndex}
-            selected={canvas.selectedIds.includes(comp.id)}
-            locked={comp.locked}
-            data={comp.data as any}
-            onDragStart={() => {
-              selectComponent(comp.id);
-            }}
-            onDragEnd={(e) => {
-              const dx = e.target.x() - comp.x;
-              const dy = e.target.y() - comp.y;
-              moveComponents([comp.id], dx, dy);
-            }}
-            onSelect={() => selectComponent(comp.id)}
-          />
-        );
-      }
-
-      // 图形组件 (矩形、圆形、线条)
-      if (comp.type === 'rectangle' || comp.type === 'circle' || comp.type === 'line') {
-        return (
-          <AtomicShape
-            key={comp.id}
-            id={comp.id}
-            type={comp.type}
-            x={comp.x}
-            y={comp.y}
-            width={comp.width}
-            height={comp.height}
-            rotation={comp.rotation}
-            opacity={comp.opacity}
-            zIndex={comp.zIndex}
-            selected={comp.selected}
-            locked={comp.locked}
-            data={comp.data as any}
-            shapeType={comp.type}
-            onDragStart={() => {
-              selectComponent(comp.id);
-            }}
-            onDragEnd={(e) => {
-              const dx = e.target.x() - comp.x;
-              const dy = e.target.y() - comp.y;
-              moveComponents([comp.id], dx, dy);
-            }}
-            onSelect={() => selectComponent(comp.id)}
-          />
-        );
       }
 
       // 三角形组件
@@ -577,6 +525,486 @@ export const Canvas = forwardRef<CanvasRef, CanvasProps>(
       if (comp.type === 'stats-card') {
         return (
           <CompositeStatsCard
+            key={comp.id}
+            id={comp.id}
+            type={comp.type}
+            x={comp.x}
+            y={comp.y}
+            width={comp.width}
+            height={comp.height}
+            rotation={comp.rotation}
+            opacity={comp.opacity}
+            zIndex={comp.zIndex}
+            selected={comp.selected}
+            locked={comp.locked}
+            data={comp.data as any}
+            onDragStart={() => {
+              selectComponent(comp.id);
+            }}
+            onDragEnd={(e) => {
+              const dx = e.target.x() - comp.x;
+              const dy = e.target.y() - comp.y;
+              moveComponents([comp.id], dx, dy);
+            }}
+            onSelect={() => selectComponent(comp.id)}
+          />
+        );
+      }
+
+      // 新组合组件 - new-title-card
+      if (comp.type === 'new-title-card') {
+        return (
+          <NewTitleCard
+            key={comp.id}
+            id={comp.id}
+            type={comp.type}
+            x={comp.x}
+            y={comp.y}
+            width={comp.width}
+            height={comp.height}
+            rotation={comp.rotation}
+            opacity={comp.opacity}
+            zIndex={comp.zIndex}
+            selected={comp.selected}
+            locked={comp.locked}
+            data={comp.data as any}
+            onDragStart={() => {
+              selectComponent(comp.id);
+            }}
+            onDragEnd={(e) => {
+              const dx = e.target.x() - comp.x;
+              const dy = e.target.y() - comp.y;
+              moveComponents([comp.id], dx, dy);
+            }}
+            onSelect={() => selectComponent(comp.id)}
+          />
+        );
+      }
+
+      // 新组合组件 - new-data-card
+      if (comp.type === 'new-data-card') {
+        return (
+          <NewDataCard
+            key={comp.id}
+            id={comp.id}
+            type={comp.type}
+            x={comp.x}
+            y={comp.y}
+            width={comp.width}
+            height={comp.height}
+            rotation={comp.rotation}
+            opacity={comp.opacity}
+            zIndex={comp.zIndex}
+            selected={comp.selected}
+            locked={comp.locked}
+            data={comp.data as any}
+            onDragStart={() => {
+              selectComponent(comp.id);
+            }}
+            onDragEnd={(e) => {
+              const dx = e.target.x() - comp.x;
+              const dy = e.target.y() - comp.y;
+              moveComponents([comp.id], dx, dy);
+            }}
+            onSelect={() => selectComponent(comp.id)}
+          />
+        );
+      }
+
+      // 新组合组件 - new-user-card
+      if (comp.type === 'new-user-card') {
+        return (
+          <NewUserCard
+            key={comp.id}
+            id={comp.id}
+            type={comp.type}
+            x={comp.x}
+            y={comp.y}
+            width={comp.width}
+            height={comp.height}
+            rotation={comp.rotation}
+            opacity={comp.opacity}
+            zIndex={comp.zIndex}
+            selected={comp.selected}
+            locked={comp.locked}
+            data={comp.data as any}
+            onDragStart={() => {
+              selectComponent(comp.id);
+            }}
+            onDragEnd={(e) => {
+              const dx = e.target.x() - comp.x;
+              const dy = e.target.y() - comp.y;
+              moveComponents([comp.id], dx, dy);
+            }}
+            onSelect={() => selectComponent(comp.id)}
+          />
+        );
+      }
+
+      // 新组合组件 - new-product-card
+      if (comp.type === 'new-product-card') {
+        return (
+          <NewProductCard
+            key={comp.id}
+            id={comp.id}
+            type={comp.type}
+            x={comp.x}
+            y={comp.y}
+            width={comp.width}
+            height={comp.height}
+            rotation={comp.rotation}
+            opacity={comp.opacity}
+            zIndex={comp.zIndex}
+            selected={comp.selected}
+            locked={comp.locked}
+            data={comp.data as any}
+            onDragStart={() => {
+              selectComponent(comp.id);
+            }}
+            onDragEnd={(e) => {
+              const dx = e.target.x() - comp.x;
+              const dy = e.target.y() - comp.y;
+              moveComponents([comp.id], dx, dy);
+            }}
+            onSelect={() => selectComponent(comp.id)}
+          />
+        );
+      }
+
+      // 新组合组件 - new-timeline
+      if (comp.type === 'new-timeline') {
+        return (
+          <NewTimeline
+            key={comp.id}
+            id={comp.id}
+            type={comp.type}
+            x={comp.x}
+            y={comp.y}
+            width={comp.width}
+            height={comp.height}
+            rotation={comp.rotation}
+            opacity={comp.opacity}
+            zIndex={comp.zIndex}
+            selected={comp.selected}
+            locked={comp.locked}
+            data={comp.data as any}
+            onDragStart={() => {
+              selectComponent(comp.id);
+            }}
+            onDragEnd={(e) => {
+              const dx = e.target.x() - comp.x;
+              const dy = e.target.y() - comp.y;
+              moveComponents([comp.id], dx, dy);
+            }}
+            onSelect={() => selectComponent(comp.id)}
+          />
+        );
+      }
+
+      // 新组合组件 - new-stats-chart
+      if (comp.type === 'new-stats-chart') {
+        return (
+          <NewStatsChart
+            key={comp.id}
+            id={comp.id}
+            type={comp.type}
+            x={comp.x}
+            y={comp.y}
+            width={comp.width}
+            height={comp.height}
+            rotation={comp.rotation}
+            opacity={comp.opacity}
+            zIndex={comp.zIndex}
+            selected={comp.selected}
+            locked={comp.locked}
+            data={comp.data as any}
+            onDragStart={() => {
+              selectComponent(comp.id);
+            }}
+            onDragEnd={(e) => {
+              const dx = e.target.x() - comp.x;
+              const dy = e.target.y() - comp.y;
+              moveComponents([comp.id], dx, dy);
+            }}
+            onSelect={() => selectComponent(comp.id)}
+          />
+        );
+      }
+
+      // 新组合组件 - new-quote-card
+      if (comp.type === 'new-quote-card') {
+        return (
+          <NewQuoteCard
+            key={comp.id}
+            id={comp.id}
+            type={comp.type}
+            x={comp.x}
+            y={comp.y}
+            width={comp.width}
+            height={comp.height}
+            rotation={comp.rotation}
+            opacity={comp.opacity}
+            zIndex={comp.zIndex}
+            selected={comp.selected}
+            locked={comp.locked}
+            data={comp.data as any}
+            onDragStart={() => {
+              selectComponent(comp.id);
+            }}
+            onDragEnd={(e) => {
+              const dx = e.target.x() - comp.x;
+              const dy = e.target.y() - comp.y;
+              moveComponents([comp.id], dx, dy);
+            }}
+            onSelect={() => selectComponent(comp.id)}
+          />
+        );
+      }
+
+      // 新组合组件 - new-section-divider
+      if (comp.type === 'new-section-divider') {
+        return (
+          <NewSectionDivider
+            key={comp.id}
+            id={comp.id}
+            type={comp.type}
+            x={comp.x}
+            y={comp.y}
+            width={comp.width}
+            height={comp.height}
+            rotation={comp.rotation}
+            opacity={comp.opacity}
+            zIndex={comp.zIndex}
+            selected={comp.selected}
+            locked={comp.locked}
+            data={comp.data as any}
+            onDragStart={() => {
+              selectComponent(comp.id);
+            }}
+            onDragEnd={(e) => {
+              const dx = e.target.x() - comp.x;
+              const dy = e.target.y() - comp.y;
+              moveComponents([comp.id], dx, dy);
+            }}
+            onSelect={() => selectComponent(comp.id)}
+          />
+        );
+      }
+
+      // 新增原子组件 - progress-bar
+      if (comp.type === 'progress-bar') {
+        return (
+          <AtomicProgressBar
+            key={comp.id}
+            id={comp.id}
+            type={comp.type}
+            x={comp.x}
+            y={comp.y}
+            width={comp.width}
+            height={comp.height}
+            rotation={comp.rotation}
+            opacity={comp.opacity}
+            zIndex={comp.zIndex}
+            selected={comp.selected}
+            locked={comp.locked}
+            data={comp.data as any}
+            onDragStart={() => {
+              selectComponent(comp.id);
+            }}
+            onDragEnd={(e) => {
+              const dx = e.target.x() - comp.x;
+              const dy = e.target.y() - comp.y;
+              moveComponents([comp.id], dx, dy);
+            }}
+            onSelect={() => selectComponent(comp.id)}
+          />
+        );
+      }
+
+      // 新增原子组件 - rating
+      if (comp.type === 'rating') {
+        return (
+          <AtomicRating
+            key={comp.id}
+            id={comp.id}
+            type={comp.type}
+            x={comp.x}
+            y={comp.y}
+            width={comp.width}
+            height={comp.height}
+            rotation={comp.rotation}
+            opacity={comp.opacity}
+            zIndex={comp.zIndex}
+            selected={comp.selected}
+            locked={comp.locked}
+            data={comp.data as any}
+            onDragStart={() => {
+              selectComponent(comp.id);
+            }}
+            onDragEnd={(e) => {
+              const dx = e.target.x() - comp.x;
+              const dy = e.target.y() - comp.y;
+              moveComponents([comp.id], dx, dy);
+            }}
+            onSelect={() => selectComponent(comp.id)}
+          />
+        );
+      }
+
+      // 新增原子组件 - background
+      if (comp.type === 'background') {
+        return (
+          <AtomicBackground
+            key={comp.id}
+            id={comp.id}
+            type={comp.type}
+            x={comp.x}
+            y={comp.y}
+            width={comp.width}
+            height={comp.height}
+            rotation={comp.rotation}
+            opacity={comp.opacity}
+            zIndex={comp.zIndex}
+            selected={comp.selected}
+            locked={comp.locked}
+            data={comp.data as any}
+            onDragStart={() => {
+              selectComponent(comp.id);
+            }}
+            onDragEnd={(e) => {
+              const dx = e.target.x() - comp.x;
+              const dy = e.target.y() - comp.y;
+              moveComponents([comp.id], dx, dy);
+            }}
+            onSelect={() => selectComponent(comp.id)}
+          />
+        );
+      }
+
+      // 新增原子组件 - border
+      if (comp.type === 'border') {
+        return (
+          <AtomicBorder
+            key={comp.id}
+            id={comp.id}
+            type={comp.type}
+            x={comp.x}
+            y={comp.y}
+            width={comp.width}
+            height={comp.height}
+            rotation={comp.rotation}
+            opacity={comp.opacity}
+            zIndex={comp.zIndex}
+            selected={comp.selected}
+            locked={comp.locked}
+            data={comp.data as any}
+            onDragStart={() => {
+              selectComponent(comp.id);
+            }}
+            onDragEnd={(e) => {
+              const dx = e.target.x() - comp.x;
+              const dy = e.target.y() - comp.y;
+              moveComponents([comp.id], dx, dy);
+            }}
+            onSelect={() => selectComponent(comp.id)}
+          />
+        );
+      }
+
+      // 新增原子组件 - dot-marker
+      if (comp.type === 'dot-marker') {
+        return (
+          <AtomicDotMarker
+            key={comp.id}
+            id={comp.id}
+            type={comp.type}
+            x={comp.x}
+            y={comp.y}
+            width={comp.width}
+            height={comp.height}
+            rotation={comp.rotation}
+            opacity={comp.opacity}
+            zIndex={comp.zIndex}
+            selected={comp.selected}
+            locked={comp.locked}
+            data={comp.data as any}
+            onDragStart={() => {
+              selectComponent(comp.id);
+            }}
+            onDragEnd={(e) => {
+              const dx = e.target.x() - comp.x;
+              const dy = e.target.y() - comp.y;
+              moveComponents([comp.id], dx, dy);
+            }}
+            onSelect={() => selectComponent(comp.id)}
+          />
+        );
+      }
+
+      // 新增原子组件 - watermark
+      if (comp.type === 'watermark') {
+        return (
+          <AtomicWatermark
+            key={comp.id}
+            id={comp.id}
+            type={comp.type}
+            x={comp.x}
+            y={comp.y}
+            width={comp.width}
+            height={comp.height}
+            rotation={comp.rotation}
+            opacity={comp.opacity}
+            zIndex={comp.zIndex}
+            selected={comp.selected}
+            locked={comp.locked}
+            data={comp.data as any}
+            onDragStart={() => {
+              selectComponent(comp.id);
+            }}
+            onDragEnd={(e) => {
+              const dx = e.target.x() - comp.x;
+              const dy = e.target.y() - comp.y;
+              moveComponents([comp.id], dx, dy);
+            }}
+            onSelect={() => selectComponent(comp.id)}
+          />
+        );
+      }
+
+      // 新增原子组件 - countdown
+      if (comp.type === 'countdown') {
+        return (
+          <AtomicCountdown
+            key={comp.id}
+            id={comp.id}
+            type={comp.type}
+            x={comp.x}
+            y={comp.y}
+            width={comp.width}
+            height={comp.height}
+            rotation={comp.rotation}
+            opacity={comp.opacity}
+            zIndex={comp.zIndex}
+            selected={comp.selected}
+            locked={comp.locked}
+            data={comp.data as any}
+            onDragStart={() => {
+              selectComponent(comp.id);
+            }}
+            onDragEnd={(e) => {
+              const dx = e.target.x() - comp.x;
+              const dy = e.target.y() - comp.y;
+              moveComponents([comp.id], dx, dy);
+            }}
+            onSelect={() => selectComponent(comp.id)}
+          />
+        );
+      }
+
+      // 新增原子组件 - table
+      if (comp.type === 'table') {
+        return (
+          <AtomicTable
             key={comp.id}
             id={comp.id}
             type={comp.type}

@@ -38,6 +38,7 @@ export const CompositeContentCard: React.FC<CompositeContentCardProps> = ({
       zIndex={zIndex}
       draggable={!locked}
       onClick={(e: any) => {
+        e.cancelBubble = true; // Stop event propagation to prevent multiple selection
         onSelect(e);
       }}
       onDragStart={() => {
@@ -63,7 +64,7 @@ export const CompositeContentCard: React.FC<CompositeContentCardProps> = ({
         x={padding}
         y={padding}
         width={width - padding * 2}
-        text={data.title || '卡片标题'}
+        text={data.title || ''}
         fontSize={18}
         fontFamily="Inter"
         fontWeight="600"
@@ -77,7 +78,7 @@ export const CompositeContentCard: React.FC<CompositeContentCardProps> = ({
           x={padding}
           y={padding + 28}
           width={width - padding * 2 - (data.showBadge ? 70 : 0)}
-          text={data.subtitle || '副标题文本'}
+          text={data.subtitle || ''}
           fontSize={14}
           fontFamily="Inter"
           fill="#94a3b8"

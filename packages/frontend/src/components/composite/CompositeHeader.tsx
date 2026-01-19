@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Group, Rect } from 'react-konva';
 import type { BaseComponent, CompositeComponentData, Component } from '../../types';
 import { AtomicText } from '../atoms/AtomicText';
@@ -31,6 +31,14 @@ export const CompositeHeader: React.FC<CompositeHeaderProps> = ({
   onChildSelect,
   updateComponent,
 }) => {
+  // Use ref to track current position for correct drag delta calculation
+  const positionRef = useRef({ x, y });
+
+  // Update ref when props change
+  React.useEffect(() => {
+    positionRef.current = { x, y };
+  }, [x, y]);
+
   const commonProps = {
     x,
     y,
@@ -39,14 +47,17 @@ export const CompositeHeader: React.FC<CompositeHeaderProps> = ({
     zIndex,
     draggable: !locked,
     onClick: (e: any) => {
+      e.cancelBubble = true; // Stop event propagation to prevent multiple selection
       onSelect(e);
     },
     onDragStart: () => {
       onDragStart();
     },
     onDragEnd: (e: any) => {
-      const dx = e.target.x() - x;
-      const dy = e.target.y() - y;
+      const newX = e.target.x();
+      const newY = e.target.y();
+      const dx = newX - positionRef.current.x;
+      const dy = newY - positionRef.current.y;
       onDragEnd({ dx, dy });
     },
     // 选中效果

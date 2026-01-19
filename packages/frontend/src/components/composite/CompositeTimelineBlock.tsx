@@ -47,6 +47,7 @@ export const CompositeTimelineBlock: React.FC<CompositeTimelineBlockProps> = ({
       zIndex={zIndex}
       draggable={!locked}
       onClick={(e: any) => {
+        e.cancelBubble = true; // Stop event propagation to prevent multiple selection
         onSelect(e);
       }}
       onDragStart={() => {
@@ -101,7 +102,7 @@ export const CompositeTimelineBlock: React.FC<CompositeTimelineBlockProps> = ({
         x={dateX}
         y={dateY + 4}
         width={80}
-        text="2024-01"
+        text={data.dateText || ''}
         fontSize={12}
         fontFamily="Inter"
         fontWeight="600"
@@ -126,7 +127,7 @@ export const CompositeTimelineBlock: React.FC<CompositeTimelineBlockProps> = ({
         x={padding}
         y={dateY + 36}
         width={width - padding * 2}
-        text="Timeline Event"
+        text={data.titleText || ''}
         fontSize={16}
         fontFamily="Inter"
         fontWeight="600"
@@ -139,7 +140,7 @@ export const CompositeTimelineBlock: React.FC<CompositeTimelineBlockProps> = ({
         x={padding}
         y={dateY + 60}
         width={width - padding * 2}
-        text="Event description goes here with more details"
+        text={data.descText || ''}
         fontSize={13}
         fontFamily="Inter"
         fill="#94a3b8"

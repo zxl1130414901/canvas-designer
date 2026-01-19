@@ -36,6 +36,8 @@ export const CompositeInfoGrid: React.FC<CompositeInfoGridProps> = ({
   const cells = [];
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < columns; col++) {
+      const cellIndex = row * columns + col;
+      const cellData = data.data?.[cellIndex] || {};
       const cellX = padding + col * (cellWidth + spacing);
       const cellY = padding + row * (cellHeight + spacing);
 
@@ -55,7 +57,7 @@ export const CompositeInfoGrid: React.FC<CompositeInfoGridProps> = ({
             x={cellX + 8}
             y={cellY + 8}
             width={cellWidth - 16}
-            text="Item"
+            text={cellData.label || ''}
             fontSize={12}
             fontFamily="Inter"
             fill="#94a3b8"
@@ -65,7 +67,7 @@ export const CompositeInfoGrid: React.FC<CompositeInfoGridProps> = ({
             x={cellX + 8}
             y={cellY + cellHeight - 24}
             width={cellWidth - 16}
-            text="Value"
+            text={cellData.value || ''}
             fontSize={14}
             fontFamily="Inter"
             fontWeight="600"
@@ -87,6 +89,7 @@ export const CompositeInfoGrid: React.FC<CompositeInfoGridProps> = ({
       zIndex={zIndex}
       draggable={!locked}
       onClick={(e: any) => {
+        e.cancelBubble = true; // Stop event propagation to prevent multiple selection
         onSelect(e);
       }}
       onDragStart={() => {

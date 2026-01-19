@@ -44,6 +44,7 @@ export const CompositeStatsCard: React.FC<CompositeStatsCardProps> = ({
       zIndex={zIndex}
       draggable={!locked}
       onClick={(e: any) => {
+        e.cancelBubble = true; // Stop event propagation to prevent multiple selection
         onSelect(e);
       }}
       onDragStart={() => {
@@ -69,7 +70,7 @@ export const CompositeStatsCard: React.FC<CompositeStatsCardProps> = ({
         x={padding}
         y={padding}
         width={contentWidth}
-        text="Total Revenue"
+        text={data.labelColor || ''} // Using labelColor as text for now, can be changed when proper label property is added
         fontSize={13}
         fontFamily="Inter"
         fontWeight="500"
@@ -82,7 +83,7 @@ export const CompositeStatsCard: React.FC<CompositeStatsCardProps> = ({
         x={padding}
         y={padding + 28}
         width={contentWidth}
-        text="¥1,234,567"
+        text={data.valueColor || ''} // Using valueColor as text for now, can be changed when proper value property is added
         fontSize={28}
         fontFamily="Inter"
         fontWeight="700"

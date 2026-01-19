@@ -11,22 +11,41 @@
    | 'triangle'
    | 'star'
    | 'arrow'
-   | 'tag';
+   | 'tag'
+   | 'progress-bar'
+   | 'rating'
+   | 'background'
+   | 'border'
+   | 'dot-marker'
+   | 'watermark'
+   | 'countdown'
+   | 'table';
 
 // 组合组件类型
- export type CompositeComponentType =
-   | 'header-group'
-   | 'content-card'
-   | 'chart-section'
-   | 'brand-footer'
-   | 'info-block'
-   | 'info-grid'
-   | 'callout-box'
-   | 'divider'
-   | 'timeline-block'
-   | 'stats-card';
+export type CompositeComponentType =
+  | 'header-group'
+  | 'content-card'
+  | 'chart-section'
+  | 'brand-footer'
+  | 'info-block'
+  | 'info-grid'
+  | 'callout-box'
+  | 'divider'
+  | 'timeline-block'
+  | 'stats-card';
 
-export type ComponentType = AtomicComponentType | CompositeComponentType;
+// 新组合组件类型
+export type NewCompositeComponentType =
+  | 'new-title-card'
+  | 'new-data-card'
+  | 'new-user-card'
+  | 'new-product-card'
+  | 'new-timeline'
+  | 'new-stats-chart'
+  | 'new-quote-card'
+  | 'new-section-divider';
+
+export type ComponentType = AtomicComponentType | CompositeComponentType | NewCompositeComponentType;
 
 // 组件接口
 export interface BaseComponent {
@@ -56,7 +75,7 @@ export interface TextComponentData {
 
 // 图片组件数据
 export interface ImageComponentData {
-  src: string;
+  src?: string;
   scale: number;
   brightness: number;
   contrast: number;
@@ -198,12 +217,13 @@ export interface CompositeComponentData {
   }
 
 // 标注框组件数据
- export interface CalloutBoxComponentData {
-   variant: 'info' | 'warning' | 'error' | 'success';
-   position: 'icon-left' | 'icon-top';
-   padding: number;
-   borderRadius: number;
- }
+  export interface CalloutBoxComponentData {
+    variant: 'info' | 'warning' | 'error' | 'success';
+    position: 'icon-left' | 'icon-top';
+    padding: number;
+    borderRadius: number;
+    content?: string;
+  }
 
 // 分割线组件数据
  export interface DividerComponentData {
@@ -230,37 +250,298 @@ export interface CompositeComponentData {
   }
 
 // 统计卡片组件数据
- export interface StatsCardComponentData {
-    trendDirection: 'up' | 'down' | 'neutral';
-    trendPercentage: number;
-    showSparkline: boolean;
-    valueColor: string;
-    labelColor: string;
-    bgColor?: string;
-  }
+export interface StatsCardComponentData {
+  trendDirection: 'up' | 'down' | 'neutral';
+  trendPercentage: number;
+  showSparkline: boolean;
+  valueColor: string;
+  labelColor: string;
+  bgColor?: string;
+}
+
+// 标题卡片数据
+export interface TitleCardData {
+  title: string;
+  subtitle?: string;
+  bgStyle: 'gradient' | 'solid' | 'outline';
+  gradientColors?: [string, string];
+  bgColor?: string;
+  titleColor: string;
+  subtitleColor?: string;
+  icon?: string;
+  iconColor?: string;
+}
+
+// 数据卡片数据
+export interface DataCardData {
+  label: string;
+  value: string;
+  unit?: string;
+  trend?: {
+    direction: 'up' | 'down' | 'neutral';
+    value: string;
+    color: string;
+  };
+  icon?: string;
+  iconColor?: string;
+  bgColor?: string;
+  valueColor: string;
+  labelColor: string;
+}
+
+// 用户卡片数据
+export interface UserCardData {
+  avatarUrl?: string;
+  name: string;
+  title?: string;
+  bio?: string;
+  socialLinks?: Array<{ platform: string; url: string }>;
+  bgColor?: string;
+  avatarBg?: string;
+  nameColor: string;
+  titleColor?: string;
+  bioColor?: string;
+}
+
+// 产品卡片数据
+export interface ProductCardData {
+  imageUrl?: string;
+  title: string;
+  description?: string;
+  price: string;
+  originalPrice?: string;
+  buttonText?: string;
+  badge?: {
+    text: string;
+    color: string;
+  };
+  bgColor?: string;
+  titleColor: string;
+  priceColor: string;
+  buttonColor?: string;
+}
+
+// 时间线数据
+export interface TimelineData {
+  date: string;
+  time?: string;
+  title: string;
+  description?: string;
+  icon?: string;
+  iconColor?: string;
+  dotColor?: string;
+  lineColor?: string;
+  bgColor?: string;
+  dateColor: string;
+  titleColor: string;
+  descColor?: string;
+}
+
+// 统计图表数据
+export interface StatsChartData {
+  type: 'bar' | 'horizontal-bar';
+  data: Array<{ label: string; value: number; color?: string }>;
+  labels: string[];
+  colors?: string[];
+  showValues: boolean;
+  barColor?: string;
+  labelColor: string;
+  valueColor?: string;
+  bgColor?: string;
+}
+
+// 引用卡片数据
+export interface QuoteCardData {
+  quote: string;
+  author?: string;
+  source?: string;
+  style: 'simple' | 'border' | 'icon';
+  icon?: string;
+  bgColor?: string;
+  quoteColor: string;
+  authorColor?: string;
+  borderColor?: string;
+}
+
+// 分隔装饰数据
+export interface SectionDividerData {
+  style: 'line' | 'dashed' | 'dotted' | 'gradient' | 'dots' | 'wave' | 'stars';
+  length: number;
+  thickness: number;
+  color: string;
+  secondaryColor?: string;
+  decorations?: Array<{ type: string; position: number }>;
+}
+
+// 新增原子组件类型定义
+
+// 进度条组件数据
+export interface ProgressBarComponentData {
+  progress: number; // 0-100
+  barColor: string;
+  backgroundColor: string;
+  showLabel: boolean;
+  labelColor: string;
+  barHeight: number;
+  borderRadius: number;
+}
+
+// 星级评分组件数据
+export interface RatingComponentData {
+  rating: number; // 0-5
+  maxStars: number;
+  starColor: string;
+  emptyColor: string;
+  showLabel: boolean;
+  labelText: string;
+  labelColor: string;
+  starSize: number;
+}
+
+// 图片组件数据
+export interface ImageComponentData {
+  src?: string; // 图片URL或base64
+  placeholderColor: string;
+  placeholderText: string;
+  showPlaceholder: boolean;
+  cornerRadius: number;
+  objectFit: 'cover' | 'contain' | 'fill';
+}
+
+// 背景块组件数据
+export interface BackgroundComponentData {
+  fillColor: string;
+  cornerRadius: number;
+  gradientColors?: string[];
+  gradientDirection?: 'horizontal' | 'vertical';
+  opacity: number;
+  borderColor?: string;
+  borderWidth?: number;
+}
+
+// 边框装饰组件数据
+export interface BorderComponentData {
+  borderColor: string;
+  borderWidth: number;
+  cornerRadius: number;
+  style: 'solid' | 'dashed' | 'dotted' | 'double';
+  position: 'inside' | 'outside' | 'center';
+}
+
+// 圆点标记组件数据
+export interface DotMarkerComponentData {
+  dotColor: string;
+  dotSize: number;
+  label?: string;
+  labelColor: string;
+  labelPosition: 'top' | 'bottom' | 'left' | 'right';
+  filled: boolean;
+  borderColor?: string;
+  borderWidth?: number;
+}
+
+// 水印组件数据
+export interface WatermarkComponentData {
+  text: string;
+  fontSize: number;
+  fontFamily: string;
+  color: string;
+  opacity: number;
+  rotation: number;
+  repeat: boolean;
+  repeatSpacing: number;
+  patternAngle: number;
+}
+
+// 图标组件数据
+export interface IconComponentData {
+  iconType: 'image' | 'video' | 'link' | 'email' | 'phone' | 'location' | 'calendar' | 'user' | 'gear' | 'check' | 'warning' | 'info' | 'question' | 'star' | 'heart' | 'cart' | 'search' | 'plus' | 'minus' | 'close' | 'menu';
+  iconColor: string;
+  iconSize: number;
+  filled: boolean;
+  backgroundColor?: string;
+  showBackground: boolean;
+  strokeWidth?: number;
+}
+
+// 倒计时组件数据
+export interface CountdownComponentData {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+  separatorColor: string;
+  numberColor: string;
+  labelColor: string;
+  showLabels: boolean;
+  backgroundColor: string;
+  cornerRadius: number;
+}
+
+// 表格组件数据
+export interface TableCell {
+  text: string;
+  color?: string;
+  fontWeight?: 'normal' | 'bold';
+  align?: 'left' | 'center' | 'right';
+}
+
+export interface TableRow {
+  cells: TableCell[];
+  bgColor?: string;
+}
+
+export interface TableComponentData {
+  headers: string[];
+  rows: TableRow[];
+  showHeaders: boolean;
+  headerBgColor: string;
+  headerColor: string;
+  borderColor: string;
+  cellPadding: number;
+  fontSize: number;
+  cornerRadius: number;
+}
 
 // 完整组件
- export interface Component extends BaseComponent {
-   data:
-     | TextComponentData
-     | ImageComponentData
-     | ShapeComponentData
-     | LineComponentData
-     | ChartComponentData
-     | DecorationComponentData
-     | QRCodeComponentData
-     | TriangleComponentData
-     | StarComponentData
-     | ArrowComponentData
-     | TagComponentData
-     | ContentCardComponentData
-     | InfoGridComponentData
-     | CalloutBoxComponentData
-     | DividerComponentData
-     | TimelineBlockComponentData
-     | StatsCardComponentData
-     | CompositeComponentData;
- }
+export interface Component extends BaseComponent {
+  data:
+    | TextComponentData
+    | ImageComponentData
+    | ShapeComponentData
+    | LineComponentData
+    | ChartComponentData
+    | DecorationComponentData
+    | QRCodeComponentData
+    | TriangleComponentData
+    | StarComponentData
+    | ArrowComponentData
+    | TagComponentData
+    | ContentCardComponentData
+    | InfoGridComponentData
+    | CalloutBoxComponentData
+    | DividerComponentData
+    | TimelineBlockComponentData
+    | StatsCardComponentData
+    | CompositeComponentData
+    | TitleCardData
+    | DataCardData
+    | UserCardData
+    | ProductCardData
+    | TimelineData
+    | StatsChartData
+    | QuoteCardData
+    | SectionDividerData
+    | ProgressBarComponentData
+    | RatingComponentData
+    | BackgroundComponentData
+    | BorderComponentData
+    | DotMarkerComponentData
+    | WatermarkComponentData
+    | IconComponentData
+    | CountdownComponentData
+    | TableComponentData;
+}
 
 // 画布配置
 export interface CanvasConfig {
