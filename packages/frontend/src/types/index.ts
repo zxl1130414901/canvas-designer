@@ -68,9 +68,31 @@ export interface TextComponentData {
   fontSize: number;
   fontFamily: string;
   fontWeight: 'normal' | 'bold' | 'light';
+  fontStyle?: 'normal' | 'italic';
   color: string;
   textAlign: 'left' | 'center' | 'right';
   lineHeight: number;
+  letterSpacing?: number;
+  backgroundColor?: string;
+  textDecoration?: 'none' | 'underline' | 'line-through';
+  // 高级效果
+  textShadow?: {
+    enabled: boolean;
+    color: string;
+    offsetX: number;
+    offsetY: number;
+    blur: number;
+  };
+  textGlow?: {
+    enabled: boolean;
+    color: string;
+    blur: number;
+  };
+  textGradient?: {
+    enabled: boolean;
+    colors: [string, string];
+    direction: 'horizontal' | 'vertical' | 'diagonal';
+  };
 }
 
 // 图片组件数据

@@ -61,9 +61,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ onExportSVG, onExportPNG }) =>
         fontSize: 24,
         fontFamily: 'Inter',
         fontWeight: 'bold' as const,
+        fontStyle: 'normal' as const,
         color: '#333333',
         textAlign: 'center' as const,
         lineHeight: 1.5,
+        letterSpacing: 0,
+        textDecoration: 'none' as const,
+        textShadow: { enabled: false, color: '#000000', offsetX: 2, offsetY: 2, blur: 4 },
+        textGlow: { enabled: false, color: '#ff6b35', blur: 10 },
+        textGradient: { enabled: false, colors: ['#ff6b35', '#f7c531'] as [string, string], direction: 'horizontal' as const },
       },
     };
     addComponent(newComponent);
@@ -442,9 +448,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ onExportSVG, onExportPNG }) =>
         fontSize: 36,
         fontFamily: 'Inter',
         fontWeight: 'bold' as const,
+        fontStyle: 'normal' as const,
         color: '#333333',
         textAlign: 'left' as const,
         lineHeight: 1.2,
+        letterSpacing: 0,
+        textDecoration: 'none' as const,
+        textShadow: { enabled: false, color: '#000000', offsetX: 2, offsetY: 2, blur: 4 },
+        textGlow: { enabled: false, color: '#ff6b35', blur: 10 },
+        textGradient: { enabled: false, colors: ['#ff6b35', '#f7c531'] as [string, string], direction: 'horizontal' as const },
       },
     };
 
@@ -463,9 +475,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ onExportSVG, onExportPNG }) =>
         fontSize: 18,
         fontFamily: 'Inter',
         fontWeight: 'normal' as const,
+        fontStyle: 'normal' as const,
         color: '#666666',
         textAlign: 'left' as const,
         lineHeight: 1.4,
+        letterSpacing: 0,
+        textDecoration: 'none' as const,
+        textShadow: { enabled: false, color: '#000000', offsetX: 2, offsetY: 2, blur: 4 },
+        textGlow: { enabled: false, color: '#ff6b35', blur: 10 },
+        textGradient: { enabled: false, colors: ['#ff6b35', '#f7c531'] as [string, string], direction: 'horizontal' as const },
       },
     };
 

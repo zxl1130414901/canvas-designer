@@ -57,7 +57,6 @@ export const AtomicBarcode: React.FC<AtomicBarcodeProps> = ({
   rotation,
   opacity,
   zIndex,
-  selected,
   locked,
   data,
   onDragStart,
@@ -92,8 +91,8 @@ export const AtomicBarcode: React.FC<AtomicBarcodeProps> = ({
         width={width}
         height={height}
         fill={backgroundColor}
-        stroke={selected ? '#ff8c5a' : '#e0e0e0'}
-        strokeWidth={selected ? 2 : 1}
+        stroke="#e0e0e0"
+        strokeWidth={1}
         cornerRadius={4}
       />
 

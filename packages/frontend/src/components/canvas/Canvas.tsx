@@ -3,6 +3,7 @@ import { Stage, Layer, Transformer } from 'react-konva';
 import { useStore } from '../../store';
 import type { Component } from '../../types';
 import { COMPONENT_REGISTRY } from '../../registries/ComponentRegistry';
+import { NeonSelectionBorder } from './AnimatedSelectionBorder';
 
 interface CanvasProps {
   width?: number;
@@ -216,19 +217,28 @@ export const Canvas = forwardRef<CanvasRef, CanvasProps>(
               .sort((a, b) => a.zIndex - b.zIndex)
               .map(renderComponent)}
 
-            {/* 变换器（缩放、旋转） */}
+            {/* 动画选中边框 - 霓虹灯效果 */}
+            {selectedComponent && (
+              <NeonSelectionBorder
+                stageRef={stageRef}
+                componentId={selectedComponent.id}
+              />
+            )}
+
+            {/* 变换器（缩放、旋转）- 简化样式 */}
             {selectedComponent && getSelectedNode() && (
               <Transformer
                 selectedNodes={[getSelectedNode()]}
                 boundBoxFunc={(oldBox) => {
                   return oldBox;
                 }}
-                anchorSize={10}
-                anchorCornerRadius={4}
-                anchorStroke="#ff6b35"
-                anchorFill="#ff6b35"
-                borderStroke="#ff6b35"
-                borderDash={[6, 4]}
+                anchorSize={8}
+                anchorCornerRadius={3}
+                anchorStroke="#ff8c5a"
+                anchorFill="#ff8c5a"
+                anchorStrokeWidth={1}
+                borderStroke="transparent"
+                borderStrokeWidth={0}
                 rotateEnabled
                 enabledAnchors={[
                   'top-left',

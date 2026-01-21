@@ -52,7 +52,6 @@ export const AtomicQRCode: React.FC<AtomicQRCodeProps> = ({
   rotation,
   opacity,
   zIndex,
-  selected,
   locked,
   data,
   onDragStart,
@@ -90,8 +89,8 @@ export const AtomicQRCode: React.FC<AtomicQRCodeProps> = ({
         width={width}
         height={height}
         fill={backgroundColor}
-        stroke={selected ? '#ff8c5a' : '#e0e0e0'}
-        strokeWidth={selected ? 2 : 1}
+        stroke="#e0e0e0"
+        strokeWidth={1}
       />
 
       {/* 二维码图案 */}

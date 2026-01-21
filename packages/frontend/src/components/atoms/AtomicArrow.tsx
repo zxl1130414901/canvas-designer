@@ -1,5 +1,5 @@
 import React from 'react';
-import { Arrow, Line, Path, Group } from 'react-konva';
+import { Arrow, Line, Path, Group, Rect } from 'react-konva';
 import type { BaseComponent, ArrowComponentData } from '../../types';
 
 interface AtomicArrowProps extends BaseComponent {
@@ -18,7 +18,6 @@ export const AtomicArrow: React.FC<AtomicArrowProps> = ({
   rotation,
   opacity,
   zIndex,
-  selected,
   locked,
   data,
   onDragStart,
@@ -98,18 +97,34 @@ export const AtomicArrow: React.FC<AtomicArrowProps> = ({
 
   // 路径属性
   const pathProps = {
-    stroke: selected ? '#ff8c5a' : data.strokeColor,
-    strokeWidth: selected ? 3 : data.strokeWidth || 2,
+    stroke: data.strokeColor,
+    strokeWidth: data.strokeWidth || 2,
     dash: data.dashArray || undefined,
-    shadowEnabled: selected,
-    shadowBlur: 10,
-    shadowColor: '#ff8c5a',
   };
 
   // 箭头填充样式
   let arrowFill = data.strokeColor;
   if (data.arrowStyle === 'outlined') {
     arrowFill = 'transparent';
+  }
+
+  // 计算点击区域
+  const padding = 20; // 点击区域padding
+  let hitboxX = Math.min(startX, endX) - pointerLength - padding;
+  let hitboxY = Math.min(startY, endY) - pointerLength - padding;
+  let hitboxWidth = Math.abs(endX - startX) + pointerLength * 2 + padding * 2;
+  let hitboxHeight = Math.abs(endY - startY) + pointerLength * 2 + padding * 2;
+
+  // 对于曲线箭头，扩大点击区域
+  if (showCurve && data.curvature) {
+    const curveExtent = data.curvature + padding;
+    if (data.direction === 'right' || data.direction === 'left') {
+      hitboxY = Math.min(startY, endY) - curveExtent;
+      hitboxHeight = Math.abs(endY - startY) + curveExtent * 2;
+    } else {
+      hitboxX = Math.min(startX, endX) - curveExtent;
+      hitboxWidth = Math.abs(endX - startX) + curveExtent * 2;
+    }
   }
 
   return (
@@ -129,6 +144,16 @@ export const AtomicArrow: React.FC<AtomicArrowProps> = ({
       }}
       onDragEnd={onDragEnd}
     >
+      {/* 透明点击区域 - 扩大点击范围 */}
+      <Rect
+        x={hitboxX}
+        y={hitboxY}
+        width={hitboxWidth}
+        height={hitboxHeight}
+        fill="transparent"
+        listening={true}
+      />
+
       {showCurve ? (
         <>
           {/* 曲线主体 */}

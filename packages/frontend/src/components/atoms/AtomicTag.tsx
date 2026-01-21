@@ -18,7 +18,6 @@ export const AtomicTag: React.FC<AtomicTagProps> = ({
   rotation,
   opacity,
   zIndex,
-  selected,
   locked,
   data,
   onDragStart,
@@ -87,8 +86,8 @@ export const AtomicTag: React.FC<AtomicTagProps> = ({
         width={width}
         height={height}
         fill={data.backgroundColor}
-        stroke={selected ? '#ff8c5a' : data.borderColor}
-        strokeWidth={selected ? 3 : data.borderWidth || 1}
+        stroke={data.borderColor}
+        strokeWidth={data.borderWidth || 1}
         dash={borderDashMap[data.borderStyle] || undefined}
         cornerRadius={borderRadius}
         shadowEnabled={data.shadowEnabled}

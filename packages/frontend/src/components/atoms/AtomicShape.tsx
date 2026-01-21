@@ -18,7 +18,6 @@ export const AtomicShape: React.FC<AtomicShapeProps> = ({
   rotation,
   opacity,
   zIndex,
-  selected,
   locked,
   data,
   shapeType,
@@ -44,13 +43,6 @@ export const AtomicShape: React.FC<AtomicShapeProps> = ({
       onDragStart();
     },
     onDragEnd: onDragEnd,
-    // 选中效果
-    stroke: selected ? '#ff8c5a' : data.borderColor,
-    strokeWidth: selected ? 3 : data.borderWidth,
-    dash: borderDashMap[data.borderStyle] || undefined,
-    shadowEnabled: selected,
-    shadowBlur: 10,
-    shadowColor: '#ff8c5a',
   };
 
   if (shapeType === 'rectangle') {
@@ -63,13 +55,15 @@ export const AtomicShape: React.FC<AtomicShapeProps> = ({
         height={height}
         fill={data.fillColor}
         cornerRadius={data.borderRadius}
+        stroke={data.borderColor}
+        strokeWidth={data.borderWidth}
+        dash={borderDashMap[data.borderStyle] || undefined}
         {...commonProps}
       />
     );
   }
 
   if (shapeType === 'circle') {
-    // 使用Group包装Circle，解决拖拽坐标问题
     return (
       <Group
         id={id}
@@ -94,21 +88,9 @@ export const AtomicShape: React.FC<AtomicShapeProps> = ({
           y={height / 2}
           radius={width / 2}
           fill={data.fillColor}
-          stroke={selected ? '#ff8c5a' : data.borderColor}
-          strokeWidth={selected ? 3 : data.borderWidth}
+          stroke={data.borderColor}
+          strokeWidth={data.borderWidth}
         />
-        {/* 选中边框 */}
-        {selected && (
-          <Circle
-            x={width / 2}
-            y={height / 2}
-            radius={width / 2 + 2}
-            fill="transparent"
-            stroke="#ff8c5a"
-            strokeWidth={2}
-            dash={[5, 5]}
-          />
-        )}
       </Group>
     );
   }
@@ -118,6 +100,10 @@ export const AtomicShape: React.FC<AtomicShapeProps> = ({
       <Line
         id={id}
         points={[x, y, x + width, y + height]}
+        stroke={data.borderColor}
+        strokeWidth={data.borderWidth}
+        dash={borderDashMap[data.borderStyle] || undefined}
+        lineCap="round"
         {...commonProps}
       />
     );

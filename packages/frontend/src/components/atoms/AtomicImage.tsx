@@ -93,8 +93,8 @@ export const AtomicImage: React.FC<AtomicImageProps> = ({
             width={width}
             height={height}
             fill={data.placeholderColor || 'rgba(59, 130, 246, 0.2)'}
-            stroke={selected ? '#ff8c5a' : 'rgba(59, 130, 246, 0.4)'}
-            strokeWidth={selected ? 2 : 1}
+            stroke="rgba(59, 130, 246, 0.4)"
+            strokeWidth={1}
             cornerRadius={cornerRadius}
             dash={data.showPlaceholder ? [8, 8] : undefined}
           />
