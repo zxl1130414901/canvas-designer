@@ -26,21 +26,15 @@ export const NeonSelectionBorder: React.FC<NeonSelectionBorderProps> = ({
       try {
         const clientRect = node.getClientRect?.();
         if (clientRect?.width) {
-          // 获取节点位置
           const nodeX = node.x?.() || 0;
           const nodeY = node.y?.() || 0;
           const nodeRotation = node.rotation?.() || 0;
-
-          // 计算相对于节点位置的偏移
           const offsetX = clientRect.x - nodeX;
           const offsetY = clientRect.y - nodeY;
 
-          // 设置Group在节点位置
           groupRef.current.x(nodeX);
           groupRef.current.y(nodeY);
           groupRef.current.rotation(nodeRotation);
-
-          // 设置Rect相对于Group的位置和尺寸
           rectRef.current.x(offsetX);
           rectRef.current.y(offsetY);
           rectRef.current.width(clientRect.width);
@@ -51,8 +45,6 @@ export const NeonSelectionBorder: React.FC<NeonSelectionBorderProps> = ({
 
     node.on('dragmove', updatePosition);
     node.on('transform', updatePosition);
-
-    // 初始化位置
     updatePosition();
 
     return () => {
@@ -61,17 +53,16 @@ export const NeonSelectionBorder: React.FC<NeonSelectionBorderProps> = ({
     };
   }, [stageRef, componentId]);
 
-  // 动画
+  // 流动动画
   useEffect(() => {
     const rect = rectRef.current;
     if (!rect) return;
 
     let dashOffset = 0;
-    const speed = 0.4;
 
     const animate = () => {
       if (!rect) return;
-      dashOffset -= speed;
+      dashOffset -= 0.4;
       rect.dashOffset(dashOffset);
       animationRef.current = requestAnimationFrame(animate);
     };
@@ -81,6 +72,7 @@ export const NeonSelectionBorder: React.FC<NeonSelectionBorderProps> = ({
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
       }
     };
   }, []);
@@ -89,8 +81,6 @@ export const NeonSelectionBorder: React.FC<NeonSelectionBorderProps> = ({
     <Group ref={groupRef} listening={false}>
       <Rect
         ref={rectRef}
-        x={0}
-        y={0}
         stroke="#00d4ff"
         strokeWidth={2}
         dash={[200, 6]}

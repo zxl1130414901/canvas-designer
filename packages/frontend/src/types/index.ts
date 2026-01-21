@@ -67,7 +67,7 @@ export interface TextComponentData {
   text: string;
   fontSize: number;
   fontFamily: string;
-  fontWeight: 'normal' | 'bold' | 'light';
+  fontWeight: number; // 100-900, numeric value for font weight
   fontStyle?: 'normal' | 'italic';
   color: string;
   textAlign: 'left' | 'center' | 'right';
@@ -92,6 +92,7 @@ export interface TextComponentData {
     enabled: boolean;
     colors: [string, string];
     direction: 'horizontal' | 'vertical' | 'diagonal';
+    splitPoint?: number; // 0-100, controls gradient transition point
   };
 }
 
@@ -109,13 +110,34 @@ export interface ImageComponentData {
   objectFit: 'cover' | 'contain' | 'fill';
 }
 
- // 图形组件数据
+  // 图形组件数据
   export interface ShapeComponentData {
     fillColor: string;
     borderColor: string;
     borderWidth: number;
     borderStyle: 'solid' | 'dashed' | 'dotted';
     borderRadius: number;
+    // 阴影效果
+    shadow?: {
+      enabled: boolean;
+      color: string;
+      offsetX: number;
+      offsetY: number;
+      blur: number;
+    };
+    // 发光效果
+    glow?: {
+      enabled: boolean;
+      color: string;
+      blur: number;
+    };
+    // 填充渐变
+    fillGradient?: {
+      enabled: boolean;
+      colors: [string, string];
+      direction: 'horizontal' | 'vertical' | 'diagonal';
+      splitPoint?: number;
+    };
   }
 
  // 线条组件数据
@@ -205,29 +227,41 @@ export interface CompositeComponentData {
    }
 
  // 标签组件数据
-  export interface TagComponentData {
-     text: string;
-     backgroundColor: string;
-     textColor: string;
-     borderColor: string;
-     borderRadius: number;
-     padding: number;
-     variant: 'pill' | 'rounded' | 'square';
-     fontSize: number;
-     textAlign: 'left' | 'center' | 'right';
-     // 新增属性
-     textPositionX: 'padding' | 'left' | 'right' | 'top' | 'bottom' | 'center' | 'custom';
-     textPositionY: 'padding' | 'left' | 'right' | 'top' | 'bottom' | 'center' | 'custom';
-     customTextX: number;
-     customTextY: number;
-     borderWidth: number;
-     borderStyle: 'solid' | 'dashed' | 'dotted';
-     shadowEnabled: boolean;
-     shadowBlur: number;
-     shadowColor: string;
-     shadowOffsetX: number;
-     shadowOffsetY: number;
-  }
+   export interface TagComponentData {
+      text: string;
+      backgroundColor: string;
+      textColor: string;
+      borderColor: string;
+      borderRadius: number;
+      padding: number;
+      variant: 'pill' | 'rounded' | 'square';
+      fontSize: number;
+      fontFamily: string;
+      fontStyle: 'normal' | 'italic';
+      textDecoration: 'none' | 'underline' | 'line-through';
+      textAlign: 'left' | 'center' | 'right';
+      borderWidth: number;
+      borderStyle: 'solid' | 'dashed' | 'dotted';
+      // 高级效果
+      shadowConfig?: {
+        enabled: boolean;
+        color: string;
+        offsetX: number;
+        offsetY: number;
+        blur: number;
+      };
+      glowConfig?: {
+        enabled: boolean;
+        color: string;
+        blur: number;
+      };
+      gradientConfig?: {
+        enabled: boolean;
+        colors: [string, string];
+        direction: 'horizontal' | 'vertical' | 'diagonal';
+        splitPoint?: number;
+      };
+   }
 
  // 内容卡片组件数据
  export interface ContentCardComponentData {

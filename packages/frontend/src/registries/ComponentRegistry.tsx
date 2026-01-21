@@ -35,13 +35,13 @@ import { NewTitleCard, NewDataCard, NewUserCard, NewProductCard, NewTimeline, Ne
  * This eliminates need for 23+ if-else statements in Canvas.tsx
  */
 
-// Memoize atomic components for performance
+// Memoize atomic components for performance (AtomicTag removed memo to fix data updates)
 const MemoAtomicText = React.memo(AtomicText);
 const MemoAtomicShape = React.memo(AtomicShape);
 const MemoAtomicTriangle = React.memo(AtomicTriangle);
 const MemoAtomicStar = React.memo(AtomicStar);
 const MemoAtomicArrow = React.memo(AtomicArrow);
-const MemoAtomicTag = React.memo(AtomicTag);
+const MemoAtomicTag = AtomicTag; // Not memoized - data props update frequently
 const MemoAtomicProgressBar = React.memo(AtomicProgressBar);
 const MemoAtomicRating = React.memo(AtomicRating);
 const MemoAtomicBackground = React.memo(AtomicBackground);

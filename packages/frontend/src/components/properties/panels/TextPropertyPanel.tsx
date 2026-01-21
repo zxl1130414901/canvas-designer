@@ -19,9 +19,9 @@ interface TextPropertyPanelProps {
   onUpdate: (updates: any) => void;
 }
 
-// Extended font options
+// Extended font options - Inter supports variable font weight
 const fontOptions = [
-  { value: 'Inter', label: 'Inter' },
+  { value: 'Inter', label: 'Inter (可变字重)' },
   { value: 'Arial', label: 'Arial' },
   { value: 'Helvetica', label: 'Helvetica' },
   { value: 'Georgia', label: 'Georgia' },
@@ -31,19 +31,6 @@ const fontOptions = [
   { value: 'PingFang SC', label: '苹方' },
   { value: 'Source Han Sans CN', label: '思源黑体' },
   { value: 'Noto Sans SC', label: 'Noto Sans SC' },
-  { value: 'Zcool KuaiLe', label: '站酷快乐体' },
-  { value: 'Ma Shan Zheng', label: '马善政毛笔' },
-];
-
-// Extended font weight options
-const fontWeightOptions = [
-  { value: 'thin', label: '细体' },
-  { value: 'light', label: '轻体' },
-  { value: 'normal', label: '正常' },
-  { value: 'medium', label: '中等' },
-  { value: 'semibold', label: '半粗' },
-  { value: 'bold', label: '粗体' },
-  { value: 'extrabold', label: '特粗' },
 ];
 
 // Preset styles
@@ -52,31 +39,31 @@ const presetOptions: PresetOption[] = [
     id: 'title',
     label: '主标题',
     preview: '主标题',
-    config: { fontSize: 36, fontWeight: 'bold', textAlign: 'center' },
+    config: { fontSize: 36, fontWeight: 700, textAlign: 'center' },
   },
   {
     id: 'subtitle',
     label: '副标题',
     preview: '副标题',
-    config: { fontSize: 24, fontWeight: 'medium', textAlign: 'center' },
+    config: { fontSize: 24, fontWeight: 500, textAlign: 'center' },
   },
   {
     id: 'body',
     label: '正文',
     preview: '正文内容',
-    config: { fontSize: 16, fontWeight: 'normal', textAlign: 'left' },
+    config: { fontSize: 16, fontWeight: 400, textAlign: 'left' },
   },
   {
     id: 'caption',
     label: '标注',
     preview: '标注文字',
-    config: { fontSize: 12, fontWeight: 'normal', textAlign: 'left', color: '#94a3b8' },
+    config: { fontSize: 12, fontWeight: 400, textAlign: 'left', color: '#94a3b8' },
   },
   {
     id: 'emphasis',
     label: '强调',
     preview: '强调文字',
-    config: { fontSize: 18, fontWeight: 'bold', textAlign: 'left', color: '#ff6b35' },
+    config: { fontSize: 18, fontWeight: 700, textAlign: 'left', color: '#ff6b35' },
   },
 ];
 
@@ -112,7 +99,6 @@ export const TextPropertyPanel: React.FC<TextPropertyPanelProps> = ({
   const fontSize = typeof data.fontSize === 'number' ? data.fontSize : 24;
   const lineHeight = typeof data.lineHeight === 'number' ? data.lineHeight : 1.5;
   const fontFamily = typeof data.fontFamily === 'string' ? data.fontFamily : 'Inter';
-  const fontWeight = typeof data.fontWeight === 'string' ? data.fontWeight : 'normal';
   const fontStyle = typeof data.fontStyle === 'string' ? data.fontStyle : 'normal';
   const textDecoration = typeof data.textDecoration === 'string' ? data.textDecoration : 'none';
   const color = typeof data.color === 'string' ? data.color : '#333333';
@@ -124,7 +110,7 @@ export const TextPropertyPanel: React.FC<TextPropertyPanelProps> = ({
   // Glow config
   const textGlow = data.textGlow || { enabled: false, color: '#ff6b35', blur: 10 };
   // Gradient config
-  const textGradient = data.textGradient || { enabled: false, colors: ['#ff6b35', '#f7c531'] as [string, string], direction: 'horizontal' as const };
+  const textGradient = data.textGradient || { enabled: false, colors: ['#ff6b35', '#f7c531'] as [string, string], direction: 'horizontal' as const, splitPoint: 50 };
 
   // Handle preset selection
   const handlePresetSelect = (preset: PresetOption) => {
@@ -185,13 +171,7 @@ export const TextPropertyPanel: React.FC<TextPropertyPanelProps> = ({
           />
         </div>
 
-        <div className="property-row property-row-2">
-          <PropertySelect
-            label="字重"
-            value={fontWeight}
-            options={fontWeightOptions}
-            onChange={(v) => onUpdate({ data: { ...data, fontWeight: String(v) as any } })}
-          />
+        <div className="property-row">
           <PropertySelect
             label="样式"
             value={fontStyle}

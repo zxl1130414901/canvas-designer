@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
 import type { Component } from '../types';
 
-// 画布状态
 interface CanvasState {
   width: number;
   height: number;
@@ -12,13 +11,6 @@ interface CanvasState {
   selectedIds: string[];
 }
 
-// 历史记录（用于撤销/重做）
-interface HistoryItem {
-  components: Component[];
-  canvas: Partial<CanvasState>;
-}
-
-// 应用状态
 interface AppState {
   // 画布状态
   canvas: CanvasState;
@@ -37,12 +29,6 @@ interface AppState {
   changeZIndex: (id: string, zIndex: number) => void;
   combineComponents: (selectedIds: string[]) => void;
   separateComponents: (compositeId: string) => void;
-
-  // 历史记录
-  history: HistoryItem[];
-  historyIndex: number;
-  undo: () => void;
-  redo: () => void;
 
   // 主题
   theme: 'tech' | 'warmth' | 'business';
@@ -178,12 +164,10 @@ export const useStore = create<AppState>((set) => ({
         selectedIds.includes(c.id)
       );
 
-      // 排除现有的组合组件（不能组合组合）
       if (selectedComponents.some((c) => c.type.includes('-group'))) {
         return state;
       }
 
-      // 计算容器的边界
       const minX = Math.min(...selectedComponents.map((c) => c.x));
       const minY = Math.min(...selectedComponents.map((c) => c.y));
       const maxX = Math.max(...selectedComponents.map((c) => c.x + c.width));
@@ -193,11 +177,8 @@ export const useStore = create<AppState>((set) => ({
       const containerY = minY - 20;
       const containerWidth = maxX - minX + 40;
       const containerHeight = maxY - minY + 40;
-
-      // 创建组合容器
       const containerId = uuidv4();
 
-      // 将子组件转换为相对坐标
       const componentsWithRelativeCoords = selectedComponents.map((child) => ({
         ...child,
         selected: false,
@@ -205,7 +186,6 @@ export const useStore = create<AppState>((set) => ({
         y: child.y - containerY,
       }));
 
-      // 更新现有子组件
       const componentsWithoutSelected = state.canvas.components.filter(
         (c) => !selectedIds.includes(c.id)
       );
@@ -251,7 +231,6 @@ export const useStore = create<AppState>((set) => ({
       const containerX = composite.x;
       const containerY = composite.y;
 
-      // 将子组件转换为绝对坐标
       const componentsWithAbsoluteCoords = childIds.map((childId: string) => {
         const child = state.canvas.components.find((c: Component) => c.id === childId);
         if (!child) return null;
@@ -263,7 +242,6 @@ export const useStore = create<AppState>((set) => ({
         };
       }).filter((c: Component | null): c is Component => c !== null);
 
-      // 删除容器组件，保留其他组件，更新子组件
       const components = state.canvas.components
         .filter((c: Component) => !childIds.includes(c.id) && c.id !== compositeId)
         .concat(componentsWithAbsoluteCoords);
@@ -275,44 +253,6 @@ export const useStore = create<AppState>((set) => ({
           selectedIds: childIds,
         },
       };
-    }),
-
-  // 历史记录
-  history: [],
-  historyIndex: -1,
-
-  undo: () =>
-    set((state) => {
-      if (state.historyIndex > 0) {
-        const newIndex = state.historyIndex - 1;
-        const item = state.history[newIndex];
-        return {
-          historyIndex: newIndex,
-          canvas: {
-            ...state.canvas,
-            components: item.components,
-            ...item.canvas,
-          },
-        };
-      }
-      return state;
-    }),
-
-  redo: () =>
-    set((state) => {
-      if (state.historyIndex < state.history.length - 1) {
-        const newIndex = state.historyIndex + 1;
-        const item = state.history[newIndex];
-        return {
-          historyIndex: newIndex,
-          canvas: {
-            ...state.canvas,
-            components: item.components,
-            ...item.canvas,
-          },
-        };
-      }
-      return state;
     }),
 
   // 主题

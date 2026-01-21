@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { Text } from 'react-konva';
 import type { BaseComponent, TextComponentData } from '../../types';
 
@@ -12,8 +12,7 @@ interface AtomicTextProps extends BaseComponent {
 export const AtomicText: React.FC<AtomicTextProps> = ({
   id,
   x,
-  y,
-  width,
+  width: propWidth,
   rotation,
   opacity,
   zIndex,
@@ -23,8 +22,23 @@ export const AtomicText: React.FC<AtomicTextProps> = ({
   onDragEnd,
   onSelect,
 }) => {
-  // Calculate shadow configuration for Konva
+  const width = propWidth || 200;
+  const textRef = useRef<any>(null);
+  
+  // 文字颜色
+  const textColor = data.color || '#ffffff';
+
+  // 计算阴影/发光效果
   const shadowConfig = useMemo(() => {
+    if (data.textGlow?.enabled) {
+      return {
+        shadowColor: data.textGlow.color,
+        shadowBlur: data.textGlow.blur,
+        shadowOffsetX: 0,
+        shadowOffsetY: 0,
+        shadowOpacity: 0.8,
+      };
+    }
     if (data.textShadow?.enabled) {
       return {
         shadowColor: data.textShadow.color,
@@ -35,99 +49,66 @@ export const AtomicText: React.FC<AtomicTextProps> = ({
       };
     }
     return undefined;
-  }, [data.textShadow]);
+  }, [data.textGlow, data.textShadow]);
 
-  // Calculate glow configuration (same as shadow in Konva)
-  const glowConfig = useMemo(() => {
-    if (data.textGlow?.enabled) {
-      return {
-        shadowColor: data.textGlow.color,
-        shadowBlur: data.textGlow.blur,
-        shadowOffsetX: 0,
-        shadowOffsetY: 0,
-        shadowOpacity: 0.8,
-      };
-    }
-    return undefined;
-  }, [data.textGlow]);
-
-  // Final shadow (prioritize glow over shadow)
-  const finalShadow = useMemo(() => {
-    if (data.textGlow?.enabled) return glowConfig;
-    return shadowConfig;
-  }, [glowConfig, shadowConfig, data.textGlow]);
-
-  // Gradient fill configuration
+  // 渐变填充配置
   const gradientConfig = useMemo(() => {
-    if (data.textGradient?.enabled && data.textGradient.colors) {
-      const { colors, direction } = data.textGradient;
+    const hasGradient = data.textGradient?.enabled === true;
+    const hasColors = Array.isArray(data.textGradient?.colors) && 
+                      data.textGradient!.colors.length >= 2 &&
+                      data.textGradient!.colors[0] &&
+                      data.textGradient!.colors[1];
+    
+    if (hasGradient && hasColors) {
+      const { colors, direction, splitPoint = 50 } = data.textGradient!;
       
-      // Calculate gradient direction
-      let startPoint = { x: 0, y: 0 };
-      let endPoint = { x: 100, y: 0 };
-      
-      switch (direction) {
-        case 'vertical':
-          startPoint = { x: 0, y: 0 };
-          endPoint = { x: 0, y: 100 };
-          break;
-        case 'diagonal':
-          startPoint = { x: 0, y: 0 };
-          endPoint = { x: 100, y: 100 };
-          break;
-        case 'horizontal':
-        default:
-          startPoint = { x: 0, y: 0 };
-          endPoint = { x: 100, y: 0 };
-          break;
-      }
+      const getEndPoint = () => {
+        switch (direction) {
+          case 'vertical': return { x: 0, y: width };
+          case 'diagonal': return { x: width, y: width };
+          default: return { x: width, y: 0 };
+        }
+      };
 
+      // 使用分割点计算渐变
       return {
-        fillLinearGradientStartPoint: startPoint,
-        fillLinearGradientEndPoint: endPoint,
-        fillLinearGradientColorStops: [0, colors[0], 1, colors[1]],
+        fillLinearGradientStartPoint: { x: 0, y: 0 },
+        fillLinearGradientEndPoint: getEndPoint(),
+        fillLinearGradientColorStops: [0, colors[0], splitPoint / 100, colors[0], 1, colors[1]],
       };
     }
-    return undefined;
-  }, [data.textGradient]);
+    return null;
+  }, [data.textGradient, width]);
 
-  // Fill color (fallback when gradient is disabled)
-  const fillColor = data.textGradient?.enabled 
-    ? undefined  // Let gradient take over
-    : (data.color || '#ffffff');
+  // 最终的fill值
+  const finalFill = gradientConfig ? undefined : textColor;
 
   return (
     <Text
+      ref={textRef}
       id={id}
       x={x}
-      y={y}
       width={width}
       text={data.text}
       fontSize={data.fontSize}
       fontFamily={data.fontFamily}
-      fontWeight={data.fontWeight}
-      fill={fillColor}
+      fontWeight="normal"
+      fill={finalFill}
       align={data.textAlign}
       lineHeight={data.lineHeight}
       fontStyle={data.fontStyle || 'normal'}
       textDecoration={data.textDecoration || 'none'}
       letterSpacing={data.letterSpacing || 0}
       background={data.backgroundColor || undefined}
-      {...gradientConfig}
       rotation={rotation}
       opacity={opacity}
       zIndex={zIndex}
       draggable={!locked}
-      onClick={(e: any) => {
-        onSelect(e);
-      }}
-      onDragStart={() => {
-        onDragStart();
-      }}
-      onDragEnd={(e: any) => {
-        onDragEnd(e);
-      }}
-      {...finalShadow}
+      onClick={(e: any) => onSelect(e)}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+      {...gradientConfig}
+      {...shadowConfig}
     />
   );
 };

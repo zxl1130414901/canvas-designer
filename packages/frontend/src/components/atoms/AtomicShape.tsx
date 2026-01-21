@@ -36,13 +36,67 @@ export const AtomicShape: React.FC<AtomicShapeProps> = ({
     opacity,
     zIndex,
     draggable: !locked,
-    onClick: (e: any) => {
-      onSelect(e);
-    },
-    onDragStart: () => {
-      onDragStart();
-    },
-    onDragEnd: onDragEnd,
+    onClick: onSelect,
+    onDragStart,
+    onDragEnd,
+  };
+
+  // Shadow props
+  const shadowProps = data.shadow?.enabled
+    ? {
+        shadowColor: data.shadow.color,
+        shadowBlur: data.shadow.blur,
+        shadowOffsetX: data.shadow.offsetX,
+        shadowOffsetY: data.shadow.offsetY,
+      }
+    : {};
+
+  // Glow props (use shadowBlur + color for glow effect)
+  const glowProps = data.glow?.enabled
+    ? {
+        shadowColor: data.glow.color,
+        shadowBlur: data.glow.blur,
+        shadowOffsetX: 0,
+        shadowOffsetY: 0,
+      }
+    : {};
+
+  // Combine shadow and glow (glow takes precedence)
+  const effectProps = data.glow?.enabled ? glowProps : shadowProps;
+
+  // Create gradient fill for rectangle if enabled
+  const getRectFill = () => {
+    if (shapeType === 'rectangle' && data.fillGradient?.enabled) {
+      const { colors, direction, splitPoint = 50 } = data.fillGradient;
+      const safeSplitPoint = splitPoint ?? 50;
+      const gradientConfig = {
+        fillLinearGradientStartPoint: { x: 0, y: 0 },
+        fillLinearGradientEndPoint: { x: width, y: height },
+        fillLinearGradientColorStops: [
+          0,
+          colors[0],
+          safeSplitPoint / 100,
+          colors[0],
+          1,
+          colors[1],
+        ],
+      };
+
+      // Adjust gradient direction
+      if (direction === 'horizontal') {
+        gradientConfig.fillLinearGradientStartPoint = { x: 0, y: 0 };
+        gradientConfig.fillLinearGradientEndPoint = { x: width, y: 0 };
+      } else if (direction === 'vertical') {
+        gradientConfig.fillLinearGradientStartPoint = { x: 0, y: 0 };
+        gradientConfig.fillLinearGradientEndPoint = { x: 0, y: height };
+      } else if (direction === 'diagonal') {
+        gradientConfig.fillLinearGradientStartPoint = { x: 0, y: 0 };
+        gradientConfig.fillLinearGradientEndPoint = { x: width, y: height };
+      }
+
+      return gradientConfig;
+    }
+    return { fill: data.fillColor };
   };
 
   if (shapeType === 'rectangle') {
@@ -53,11 +107,12 @@ export const AtomicShape: React.FC<AtomicShapeProps> = ({
         y={y}
         width={width}
         height={height}
-        fill={data.fillColor}
         cornerRadius={data.borderRadius}
         stroke={data.borderColor}
         strokeWidth={data.borderWidth}
         dash={borderDashMap[data.borderStyle] || undefined}
+        {...getRectFill()}
+        {...effectProps}
         {...commonProps}
       />
     );
@@ -65,24 +120,7 @@ export const AtomicShape: React.FC<AtomicShapeProps> = ({
 
   if (shapeType === 'circle') {
     return (
-      <Group
-        id={id}
-        x={x}
-        y={y}
-        width={width}
-        height={height}
-        rotation={rotation}
-        opacity={opacity}
-        zIndex={zIndex}
-        draggable={!locked}
-        onClick={(e: any) => {
-          onSelect(e);
-        }}
-        onDragStart={() => {
-          onDragStart();
-        }}
-        onDragEnd={onDragEnd}
-      >
+      <Group id={id} x={x} y={y} rotation={rotation} opacity={opacity} zIndex={zIndex} draggable={!locked} onClick={onSelect} onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <Circle
           x={width / 2}
           y={height / 2}
@@ -90,6 +128,7 @@ export const AtomicShape: React.FC<AtomicShapeProps> = ({
           fill={data.fillColor}
           stroke={data.borderColor}
           strokeWidth={data.borderWidth}
+          {...effectProps}
         />
       </Group>
     );
