@@ -189,12 +189,39 @@ export interface CompositeComponentData {
 }
 
 // 三角形组件数据
- export interface TriangleComponentData {
-   fillColor: string;
-   borderColor: string;
-   borderWidth: number;
-   radius: number;
- }
+export interface TriangleComponentData {
+  fillColor: string;
+  borderColor: string;
+  borderWidth: number;
+  radius: number;
+  // 边框样式
+  borderStyle: 'solid' | 'dashed' | 'dotted';
+  // 渐变填充
+  fillGradient?: {
+    enabled: boolean;
+    colors: [string, string];
+    direction: 'horizontal' | 'vertical' | 'diagonal';
+    splitPoint?: number;
+  };
+  // 阴影效果
+  shadow?: {
+    enabled: boolean;
+    color: string;
+    offsetX: number;
+    offsetY: number;
+    blur: number;
+  };
+  // 发光效果
+  glow?: {
+    enabled: boolean;
+    color: string;
+    blur: number;
+  };
+  // 透明度
+  opacity: number;
+  // 三角形方向
+  direction: 'up' | 'down' | 'left' | 'right';
+}
 
 // 星形组件数据
  export interface StarComponentData {
